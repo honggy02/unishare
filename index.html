@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UniShare · PIM IT Community</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* โทนแบบ lnwshop: ขาวสะอาด ฟ้าสด เหลืองสดใส ปุ่มแคปซูล */
+  --green:#00A859; --green-deep:#00793F; --green-soft:#E3F6EC; --sky:#00A4F1; --sky-soft:#E0F4FE;
+  --teal:#10B981; --teal-soft:#E3FBF1;
+  --amber:#FFD43B; --amber-soft:#FFF7D1;
+  --red:#F43F5E; --red-soft:#FFE4E8;
+  --blue:#7C3AED; --blue-soft:#F0E9FF;
+  --bg:#FFFFFF; --surface:#FFFFFF; --surface-2:#F0F9FF; --line:#E8EEF4;
+  --tint-sky:#F0F9FF; --tint-rose:#FFF1F2; --tint-mint:#ECFDF5; --tint-sun:#FFFBEA; --tint-grape:#F5F3FF;
+  --ink:#111827; --ink-2:#374151; --ink-3:#9CA3AF;
+  --hero:linear-gradient(115deg,#00793F 0%,#00A859 48%,#00B4D8 100%);
+  --on-amber:#3B2A00;
+  --shadow:0 1px 2px rgba(17,24,39,.04),0 10px 30px -14px rgba(0,121,63,.28);
+  --radius:16px; --radius-sm:12px;
+  --font:'Noto Sans Thai','Prompt',system-ui,sans-serif; --display:'Prompt',var(--font);
+  color-scheme:light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color-scheme:light;color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.55}
+body{min-height:100vh;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--green);text-decoration:none}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.3;font-weight:600}
+.page-head h1,.hero h1,.auth-art h1{font-weight:700}
+svg.i{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* layout */
+.app{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
+.side{position:sticky;top:0;height:100vh;padding:20px 14px;border-right:1px solid var(--line);background:#FFFFFF;display:flex;flex-direction:column;gap:4px}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 10px 18px}
+.logo{position:relative;width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#00A859,#00793F);display:grid;place-items:center;color:#fff;flex:none;box-shadow:0 6px 14px -6px rgba(0,121,63,.6);overflow:hidden}
+.logo svg{width:24px;height:24px}
+.logo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff}
+.logo .dot2{position:absolute;right:5px;top:5px;width:7px;height:7px;border-radius:50%;background:var(--amber)}
+.brand b{font-family:var(--display);font-size:19px;display:block;line-height:1.1}
+.brand small{color:var(--ink-3);font-size:12px}
+.nav-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);padding:14px 12px 6px}
+.nav{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;border:0;background:none;cursor:pointer;color:var(--ink-2);font-weight:500;text-align:left;width:100%}
+.nav:hover{background:var(--surface-2);color:var(--ink)}
+.nav.on{background:var(--green-soft);color:var(--green-deep);font-weight:600}
+.nav .sub{font-size:12px;color:var(--ink-3);font-weight:400;display:block;line-height:1.2}
+.nav.on .sub{color:var(--green)}
+.side-foot{margin-top:auto;padding:12px;border-radius:14px;background:var(--tint-sun);font-size:12.5px;color:var(--ink-2)}
+.main{min-width:0;display:flex;flex-direction:column}
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:14px 28px;background:color-mix(in srgb,var(--surface) 72%,transparent);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+.search{flex:1;max-width:520px;display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--ink-3)}
+.search input{border:0;background:none;outline:none;flex:1;color:var(--ink);min-width:0}
+.top-actions{margin-left:auto;display:flex;align-items:center;gap:8px}
+.icon-btn{position:relative;width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;cursor:pointer;color:var(--ink-2)}
+.icon-btn:hover{color:var(--ink);border-color:var(--ink-3)}
+.dot{position:absolute;top:6px;right:6px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--red);color:#fff;font-size:10.5px;font-weight:600;display:grid;place-items:center;border:2px solid var(--surface)}
+.avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:600;color:#fff;font-family:var(--display);flex:none;font-size:15px}
+.me{display:flex;align-items:center;gap:10px;padding:4px 12px 4px 4px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer}
+.me small{display:block;color:var(--ink-3);font-size:11.5px;line-height:1.1}
+.content{padding:28px;max-width:1240px;width:100%;margin:0 auto;flex:1}
+.bottom-nav{display:none}
+
+/* components */
+.page-head{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.page-head h1{font-size:27px}
+.page-head p{color:var(--ink-2);margin-top:4px}
+.page-head .actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 18px;border-radius:999px;border:1px solid transparent;font-weight:500;cursor:pointer;white-space:nowrap;transition:.15s}
+.btn-primary{background:var(--green);color:#fff;font-weight:600;box-shadow:0 6px 16px -8px var(--green)}
+.btn-primary:hover{filter:brightness(1.07)}
+.btn-ghost{background:var(--surface);border-color:var(--line);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--ink-3)}
+.btn-danger{background:var(--red-soft);color:var(--red)}
+.btn-amber{background:var(--amber);color:var(--on-amber);font-weight:600}
+.btn-sm{padding:6px 12px;font-size:13px;border-radius:999px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.chip{padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:13.5px;color:var(--ink-2);display:inline-flex;gap:6px;align-items:center}
+.chip:hover{border-color:var(--ink-3)}
+.chip.on{background:var(--green);color:#fff;border-color:var(--green)}
+.chip .n{font-size:11.5px;opacity:.7}
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:3px 9px;border-radius:999px;font-weight:500;white-space:nowrap}
+.t-green{background:var(--green-soft);color:var(--green-deep)}
+.t-teal{background:var(--teal-soft);color:var(--teal)}
+.t-amber{background:var(--amber-soft);color:#8A6100}
+.t-red{background:var(--red-soft);color:var(--red)}
+.t-blue{background:var(--blue-soft);color:var(--blue)}
+.t-gray{background:var(--surface-2);color:var(--ink-2)}
+.muted{color:var(--ink-3);font-size:13px}
+.row{display:flex;align-items:center;gap:8px}
+.spacer{flex:1}
+.empty{padding:56px 20px;text-align:center;color:var(--ink-3)}
+.empty svg.i{width:40px;height:40px;stroke-width:1.3;margin-bottom:10px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.select,.input,.textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);outline:none}
+.select:focus,.input:focus,.textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-soft)}
+.textarea{min-height:90px;resize:vertical}
+.toolbar .select{width:auto;min-width:150px}
+label.f{display:block;font-size:13px;font-weight:500;color:var(--ink-2);margin:12px 0 6px}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;padding:4px;background:var(--surface-2);border-radius:12px}
+.seg button{padding:9px;border:0;border-radius:9px;background:none;cursor:pointer;font-weight:500;color:var(--ink-2)}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+
+/* stat */
+.stat{padding:18px;border:0;box-shadow:none}
+.grid.g4>.stat:nth-child(4n+1){background:var(--tint-sky)} .grid.g4>.stat:nth-child(4n+1) .k svg{color:#00A4F1}
+.grid.g4>.stat:nth-child(4n+2){background:var(--tint-rose)} .grid.g4>.stat:nth-child(4n+2) .k svg{color:#F43F5E}
+.grid.g4>.stat:nth-child(4n+3){background:var(--tint-mint)} .grid.g4>.stat:nth-child(4n+3) .k svg{color:#10B981}
+.grid.g4>.stat:nth-child(4n+4){background:var(--tint-grape)} .grid.g4>.stat:nth-child(4n+4) .k svg{color:#7C3AED}
+.stat .k{color:var(--ink-3);font-size:13px;display:flex;align-items:center;gap:6px}
+.stat .v{font-family:var(--display);font-size:30px;font-weight:600;margin-top:4px}
+.stat .s{font-size:12.5px;color:var(--ink-2)}
+.hero{padding:30px;border-radius:24px;background:var(--hero);color:#fff;position:relative;overflow:hidden;margin-bottom:20px}
+.hero h1{font-size:28px}
+.hero p{opacity:.85;margin-top:6px;max-width:560px}
+.hero .blob{position:absolute;right:-40px;top:-60px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.08)}
+.hero .blob2{position:absolute;right:120px;bottom:-90px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.06)}
+.ann{display:flex;gap:12px;padding:14px 16px;border-radius:12px;margin-bottom:10px;border:1px solid var(--line)}
+.ann{border:0} .ann.info{background:var(--tint-grape)} .ann.warning{background:var(--tint-sun)} .ann.success{background:var(--tint-sky)}
+.section-title{display:flex;align-items:center;margin:26px 0 12px}
+.section-title h3{font-size:17px}
+
+/* marketplace home */
+.mkt-hero{position:relative;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;padding:34px;border-radius:28px;background:var(--hero);color:#fff;overflow:hidden;margin-bottom:22px}
+.mkt-hero::after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;right:-120px;bottom:-220px;background:rgba(255,255,255,.12)}
+.mkt-hero>div{min-width:0}
+.mkt-search .btn{flex:none}
+.mkt-hero .eyebrow{display:inline-flex;gap:6px;align-items:center;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.18);font-size:13px;font-weight:500}
+.mkt-hero h1{font-size:40px;line-height:1.2;margin:14px 0 10px;text-wrap:balance}
+.mkt-hero h1 em{font-style:normal;color:var(--amber)}
+.mkt-hero p{opacity:.92;max-width:460px}
+.mkt-search{display:flex;align-items:center;gap:8px;background:#fff;border-radius:999px;padding:6px 6px 6px 18px;max-width:520px;margin-top:20px;box-shadow:0 14px 30px -14px rgba(0,0,0,.35);color:var(--ink-3)}
+.mkt-search input{flex:1;min-width:0;border:0;outline:0;background:none;color:var(--ink);font-size:15px}
+.quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.quick button{border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.12);color:#fff;border-radius:999px;padding:6px 13px;font-size:13px;cursor:pointer}
+.quick button:hover{background:rgba(255,255,255,.25)}
+.collage{position:relative;min-height:270px;z-index:1}
+.collage .pcard{position:absolute;width:168px;color:var(--ink);box-shadow:0 20px 40px -18px rgba(0,0,0,.45)}
+.collage .pcard:nth-child(1){left:4%;top:24px;transform:rotate(-6deg)}
+.collage .pcard:nth-child(2){left:36%;top:0;transform:rotate(3deg);z-index:2}
+.collage .pcard:nth-child(3){left:64%;top:46px;transform:rotate(8deg)}
+.cats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:22px}
+.cat{border:0;text-align:left;padding:16px;border-radius:20px;display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:.15s}
+.cat:hover{transform:translateY(-2px)}
+.cat .ci{width:44px;height:44px;border-radius:14px;background:#fff;display:grid;place-items:center}
+.cat .ci svg.i{width:22px;height:22px}
+.cat b{font-family:var(--display);font-size:15px;font-weight:600}
+.cat small{color:var(--ink-3);font-size:12.5px}
+.promos{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:8px}
+.promo{border-radius:24px;padding:24px;display:flex;align-items:center;gap:16px;cursor:pointer;position:relative;overflow:hidden}
+.promo h3{font-size:22px;font-weight:700}
+.promo p{color:var(--ink-2);font-size:14px;margin:4px 0 12px}
+.promo .big{margin-left:auto;font-family:var(--display);font-size:54px;font-weight:700;line-height:1;opacity:.9}
+.mkt-row{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(190px,1fr);gap:14px;overflow-x:auto;padding:4px 2px 10px;scroll-snap-type:x mandatory;scrollbar-width:thin}
+.pcard{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;cursor:pointer;scroll-snap-align:start;transition:.18s;display:flex;flex-direction:column}
+.pcard:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.pcard .im{aspect-ratio:1/1;background:var(--tint-sky);position:relative;overflow:hidden}
+.pcard .im img{width:100%;height:100%;object-fit:cover;display:block}
+.pcard .im .pill{position:absolute;left:10px;top:10px}
+.pcard .b{padding:10px 12px 12px;display:flex;flex-direction:column;gap:3px}
+.pcard .nm{font-weight:500;font-size:14px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.7em}
+.pcard .pr{font-family:var(--display);font-weight:700;font-size:18px;color:var(--green-deep)}
+.pcard .pr.free{color:var(--sky)}
+.pcard .who{font-size:12px;color:var(--ink-3)}
+.pill-free{background:var(--green);color:#fff;font-weight:600}
+.pill-sale{background:var(--amber);color:var(--on-amber);font-weight:600}
+.trust{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0 4px}
+.trust div{display:flex;gap:10px;align-items:center;padding:14px;border-radius:16px;background:var(--surface-2);font-size:13.5px;color:var(--ink-2)}
+.trust b{display:block;color:var(--ink);font-family:var(--display);font-size:18px}
+.trust svg.i{color:var(--green);width:22px;height:22px}
+@media (max-width:1000px){.cats{grid-template-columns:repeat(3,1fr)}.trust{grid-template-columns:1fr 1fr}}
+@media (max-width:820px){.mkt-hero{grid-template-columns:1fr;padding:22px}.mkt-search{padding-left:14px}.mkt-search .btn{padding:8px 14px}.mkt-hero h1{font-size:29px}.collage{display:none}.promos{grid-template-columns:1fr}.promo .big{font-size:40px}}
+/* note card */
+.note{padding:16px;display:flex;flex-direction:column;gap:10px}
+.file-ico{width:44px;height:44px;border-radius:11px;display:grid;place-items:center;font-weight:700;font-size:11px;color:#fff;flex:none;letter-spacing:.03em}
+.note h4{font-size:15.5px;font-weight:600}
+.note .meta{display:flex;gap:12px;color:var(--ink-3);font-size:12.5px;flex-wrap:wrap}
+.note .foot{display:flex;gap:6px;margin-top:auto;padding-top:10px;border-top:1px dashed var(--line)}
+/* item card */
+.item{overflow:hidden;display:flex;flex-direction:column}
+.item .ph{aspect-ratio:4/3;background:var(--surface-2);position:relative;display:grid;place-items:center;color:var(--ink-3)}
+.item .ph img{width:100%;height:100%;object-fit:cover}
+.item .ph .badge{position:absolute;top:10px;left:10px;box-shadow:0 1px 4px rgba(0,0,0,.15);background:var(--surface)}
+.item .ph .st{position:absolute;top:10px;right:10px;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.item .body{padding:14px;display:flex;flex-direction:column;gap:6px;flex:1}
+.price{font-family:var(--display);font-size:20px;font-weight:700;color:var(--green-deep)}
+.price.free{color:var(--teal)}
+.item.sold .ph img{filter:grayscale(1) opacity(.6)}
+/* thread */
+.thread{padding:16px 18px;display:flex;gap:14px;cursor:pointer;transition:.15s}
+.thread:hover{border-color:var(--green)}
+.thread h4{font-size:16px;font-weight:600}
+.thread .ex{color:var(--ink-2);font-size:13.5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:3px}
+.replies-count{text-align:center;min-width:54px;padding:6px;border-radius:10px;background:var(--surface-2);height:fit-content}
+.replies-count b{display:block;font-family:var(--display);font-size:18px}
+.replies-count small{font-size:11px;color:var(--ink-3)}
+.reply{display:flex;gap:12px;padding:16px 0;border-top:1px solid var(--line)}
+.reply .bubble{flex:1;min-width:0}
+.attach{display:flex;align-items:center;gap:10px;margin-top:10px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);max-width:420px}
+.attach img{max-width:100%;max-height:260px;border-radius:8px;display:block}
+.composer{padding:14px;margin-top:16px}
+.composer .pending{display:flex;align-items:center;gap:8px;margin-top:8px;padding:8px 10px;border-radius:9px;background:var(--green-soft);font-size:13px}
+/* review */
+.stars{display:inline-flex;gap:2px;color:var(--amber)}
+.stars svg.i{width:16px;height:16px}
+.stars svg.i.full{fill:currentColor}
+.star-input{display:flex;gap:4px}
+.star-input button{background:none;border:0;cursor:pointer;color:var(--line);padding:2px}
+.star-input button.on{color:var(--amber)}
+.star-input svg.i{width:30px;height:30px;fill:currentColor;stroke-width:1}
+.review{padding:18px}
+/* video */
+.video{overflow:hidden;cursor:pointer}
+.video .thumb{aspect-ratio:16/9;background:#111 center/cover no-repeat;position:relative;display:grid;place-items:center}
+.video .play{width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;color:#111;transition:.2s}
+.video:hover .play{transform:scale(1.08)}
+.video .dur{position:absolute;right:8px;bottom:8px;background:rgba(0,0,0,.75);color:#fff;font-size:12px;padding:2px 7px;border-radius:6px}
+.video .src{position:absolute;left:8px;top:8px}
+.video .body{padding:12px 14px}
+/* table */
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-weight:500;color:var(--ink-3);font-size:12.5px;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:20px;overflow-x:auto}
+.tabs button{padding:10px 14px;border:0;background:none;cursor:pointer;color:var(--ink-2);font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;display:flex;gap:6px;align-items:center}
+.tabs button.on{color:var(--green-deep);border-color:var(--green)}
+.bars{display:flex;align-items:flex-end;gap:10px;height:160px;padding-top:10px}
+.bars .b{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.bars .b i{display:block;width:100%;max-width:38px;border-radius:7px 7px 3px 3px;background:var(--green);min-height:3px}
+.bars .b small{font-size:11px;color:var(--ink-3)}
+.bars .b em{font-style:normal;font-size:11.5px;color:var(--ink-2)}
+.hbar{display:grid;grid-template-columns:minmax(120px,1.2fr) 3fr 34px;gap:10px;align-items:center;font-size:13px;margin:8px 0}
+.hbar .track{height:10px;border-radius:6px;background:var(--surface-2);overflow:hidden}
+.hbar .track i{display:block;height:100%;background:var(--teal);border-radius:6px}
+/* overlays */
+.overlay{position:fixed;inset:0;z-index:50;background:rgba(18,23,20,.5);display:grid;place-items:center;padding:20px;animation:fade .15s}
+.modal{width:100%;max-width:560px;max-height:calc(100vh - 40px);overflow:auto;background:var(--surface);border-radius:18px;box-shadow:0 30px 80px -20px rgba(0,0,0,.45);animation:pop .18s}
+.modal.wide{max-width:860px}
+.modal-head{display:flex;align-items:center;padding:18px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--surface);z-index:1}
+.modal-head h3{font-size:18px}
+.modal-body{padding:6px 22px 22px}
+.modal-foot{display:flex;gap:8px;justify-content:flex-end;padding:14px 22px;border-top:1px solid var(--line)}
+.drop{border:1.5px dashed var(--line);border-radius:12px;padding:22px;text-align:center;cursor:pointer;color:var(--ink-3);background:var(--surface-2)}
+.drop:hover{border-color:var(--green);color:var(--green)}
+.drop img{max-height:180px;border-radius:9px;margin:0 auto 8px;display:block}
+.panel{position:fixed;top:70px;right:20px;width:380px;max-width:calc(100vw - 24px);max-height:70vh;overflow:auto;z-index:40;animation:pop .15s}
+.notif{display:flex;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);font-size:13.5px;cursor:pointer}
+.notif:hover{background:var(--surface-2)}
+.notif.unread{background:color-mix(in srgb,var(--green-soft) 60%,transparent)}
+.notif .nd{width:8px;height:8px;border-radius:50%;background:var(--green);margin-top:7px;flex:none}
+.toasts{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:60;display:flex;flex-direction:column;gap:8px;align-items:center}
+.toast{padding:11px 18px;border-radius:12px;background:var(--ink);color:var(--surface);box-shadow:var(--shadow);font-size:14px;animation:pop .2s;display:flex;gap:8px;align-items:center}
+.toast.err{background:var(--red);color:#fff}
+.demo-bar{background:var(--amber);color:var(--on-amber);font-weight:500;font-size:13px;padding:7px 28px;display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--line)}
+@keyframes fade{from{opacity:0}}
+@keyframes pop{from{opacity:0;transform:translateY(6px) scale(.98)}}
+
+/* auth */
+.auth{min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr}
+.auth-art{background:var(--hero);color:#fff;padding:48px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.auth-art h1{font-size:40px;max-width:460px}
+.auth-art p{opacity:.85;max-width:440px;margin-top:12px;font-size:16px}
+.auth-art .feat{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:480px;margin-top:32px}
+.auth-art .feat div{padding:14px;border-radius:14px;background:rgba(255,255,255,.1);font-size:13.5px;display:flex;gap:10px;align-items:center}
+.auth-form{display:grid;place-items:center;padding:32px;background:#FFFFFF}
+.auth-form .box{width:100%;max-width:400px}
+.auth-form h2{font-size:26px;margin-bottom:6px}
+.err{color:var(--red);font-size:13px;margin-top:10px;min-height:18px}
+.divider{display:flex;align-items:center;gap:10px;color:var(--ink-3);font-size:12.5px;margin:18px 0}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line)}
+
+@media (max-width:1000px){.g4{grid-template-columns:repeat(2,1fr)}.g2{grid-template-columns:1fr}}
+@media (max-width:820px){
+  .app{grid-template-columns:1fr}
+  .side{display:none}
+  .top{padding:10px 16px}
+  .content{padding:18px 16px 96px}
+  .me .nm{display:none}.me{padding:3px}
+  .bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:30;background:var(--surface);border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+  .bottom-nav button{flex:1;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;color:var(--ink-3);padding:4px 0;cursor:pointer}
+  .bottom-nav button.on{color:var(--green)}
+  .auth{grid-template-columns:1fr}.auth-art{padding:28px}.auth-art h1{font-size:28px}.auth-art .feat{display:none}
+  .page-head h1{font-size:23px}
+  .demo-bar{padding:7px 16px}
+  .hbar{grid-template-columns:100px 1fr 28px}
+}
+@media (max-width:820px){
+  .search{min-width:0}
+  .top-actions{gap:6px;flex:none}
+  .top-actions .theme-btn{display:none}
+  .chips{flex-wrap:nowrap;overflow-x:auto;margin-left:-16px;margin-right:-16px;padding:0 16px 4px;scrollbar-width:none}
+  .chips .chip{flex:none}
+  .page-head .actions{margin-left:0}
+  .toolbar .search{max-width:none!important;flex:1 1 100%}
+}
+@media (max-width:520px){.g4{grid-template-columns:1fr 1fr}.brand-top{display:none}.search{max-width:none}}
+</style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+  /* ฐานข้อมูลจริง (Supabase) — publishable key เปิดเผยได้ ความปลอดภัยอยู่ที่ Row Level Security ในฐานข้อมูล
+     ลบสองบรรทัดนี้ออก (เว้นว่าง) = กลับไปใช้โหมดสาธิตที่เก็บข้อมูลในเบราว์เซอร์ */
+  window.UNISHARE_SUPABASE_URL = 'https://fsfsdavbsnamfsgftjiv.supabase.co';
+  window.UNISHARE_SUPABASE_KEY = 'sb_publishable_NEZquRDFwULqC-QkYfdTMA_yXonZaoW';
+  window.UNISHARE_API = '';
+</script>
+<div id="root"></div>
+<div class="toasts" id="toasts"></div>
+<script>
+/* =========================================================
+   UniShare frontend — Vanilla JS SPA (state-driven render)
+   ใช้ FastAPI backend ถ้าเชื่อมต่อได้ ไม่งั้นสลับเป็น "โหมดสาธิต"
+   ที่เก็บข้อมูลใน localStorage ด้วย API ชุดเดียวกัน
+   ========================================================= */
+const _mem = {};
+const store = {
+  getItem(k) { try { return window.localStorage.getItem(k); } catch { return k in _mem ? _mem[k] : null; } },
+  setItem(k, v) { try { window.localStorage.setItem(k, v); } catch (e) { if (e && e.name === 'QuotaExceededError') throw e; _mem[k] = String(v); } },
+  removeItem(k) { try { window.localStorage.removeItem(k); } catch { } delete _mem[k]; },
+};
+const CONFIG = {
+  API_BASE: store.getItem('us_api') || window.UNISHARE_API ||
+    (location.hostname === 'localhost' || location.hostname === '127.0.0.1' ? 'http://localhost:8000' : ''),
+  DOMAIN: '@pim.ac.th',
+  DEPARTMENT: 'เทคโนโลยีสารสนเทศ',
+  MAX_FILE: 10 * 1024 * 1024,
+};
+const THREAD_TAGS = ['ถามหาสื่อการเรียน', 'ประสบการณ์การเรียน', 'ปรึกษาโจทย์โปรแกรมมิ่ง', 'ฝึกงาน/สหกิจ', 'พูดคุยทั่วไป'];
+const NOTE_TYPES = ['ชีทสรุป', 'ข้อสอบเก่า', 'สไลด์บรรยาย', 'แบบฝึกหัด/Lab', 'โค้ดตัวอย่าง'];
+const ITEM_CATS = ['หนังสือเรียน', 'อุปกรณ์ไอที', 'อุปกรณ์การเรียน', 'อื่นๆ'];
+const ITEM_COND = ['ใหม่/ยังไม่แกะ', 'สภาพดีมาก', 'สภาพดี', 'มีรอยใช้งาน'];
+const MEDIA_TYPES = ['หนังสือ', 'คอร์สออนไลน์', 'ช่อง YouTube', 'เว็บไซต์', 'อื่นๆ'];
+
+/* ---------- icons (inline SVG) ---------- */
+const P = {
+  home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/>',
+  note:'<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M8 13h8M8 17h5"/>',
+  box:'<path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/>',
+  chat:'<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.8A8 8 0 1 1 21 12z"/>',
+  star:'<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.5 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+  play:'<path d="M7 4.5v15l12-7.5z"/>',
+  video:'<rect x="3" y="5" width="14" height="14" rx="2"/><path d="m17 10 4-2.5v9L17 14"/>',
+  shield:'<path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
+  bell:'<path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+  download:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
+  clip:'<path d="m20 11.5-8.3 8.3a5 5 0 0 1-7.1-7.1l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8"/>',
+  x:'<path d="M6 6l12 12M18 6 6 18"/>',
+  back:'<path d="M15 5l-7 7 7 7"/>',
+  eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  eyeoff:'<path d="M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.3 4.1M6.6 6.6C3.8 8.5 2 12 2 12s3.6 7 10 7a9.6 9.6 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',
+  thumb:'<path d="M7 11v9H4v-9zM7 11l4-8a2.5 2.5 0 0 1 2.5 2.5V9h5.2a2 2 0 0 1 2 2.3l-1.3 7A2 2 0 0 1 17.4 20H7"/>',
+  flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
+  logout:'<path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M21.5 20a6.5 6.5 0 0 0-4-6"/>',
+  chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  megaphone:'<path d="M3 10v4l11 5V5z"/><path d="M14 8a4 4 0 0 1 0 8M6 14.5V19h3"/>',
+  list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+  book:'<path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 21.5A2.5 2.5 0 0 1 6.5 19H20v3H6.5"/>',
+  pin:'<path d="M12 17v5M8 3h8l-1 6 3 4H6l3-4z"/>',
+  lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  unlock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  moon:'<path d="M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10z"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+  check:'<path d="m5 12 5 5 9-10"/>',
+  image:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/>',
+  tag:'<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  cloud:'<path d="M7 18a5 5 0 1 1 .9-9.9A6 6 0 0 1 19.5 10 4 4 0 0 1 18 18z"/>',
+};
+/* โลโก้ UniShare: ตัว U ที่เป็นลูกศรส่งต่อ (รุ่นพี่ → รุ่นน้อง)
+   ถ้ามีไฟล์ logo.png วางไว้ในโฟลเดอร์ frontend จะใช้ไฟล์นั้นแทนอัตโนมัติ */
+const LOGO_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 5v7.5a5 5 0 0 0 10 0V8"/><path d="m13.8 10.6 3.2-3.2 3.2 3.2"/></svg>';
+const logoMark = () => `<span class="logo">${LOGO_SVG}<span class="dot2"></span><img src="logo.png" alt="" onerror="this.remove()"></span>`;
+const ic = (n, cls = '') => `<svg class="i ${cls}" viewBox="0 0 24 24">${P[n] || ''}</svg>`;
+
+/* ---------- utils ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmtNum = n => Number(n || 0).toLocaleString('th-TH');
+const fmtSize = b => !b ? '' : b < 1024 ? b + ' B' : b < 1048576 ? (b / 1024).toFixed(0) + ' KB' : (b / 1048576).toFixed(1) + ' MB';
+function ago(iso) {
+  if (!iso) return '';
+  const s = (Date.now() - new Date(iso).getTime()) / 1000;
+  if (s < 60) return 'เมื่อสักครู่';
+  if (s < 3600) return Math.floor(s / 60) + ' นาทีที่แล้ว';
+  if (s < 86400) return Math.floor(s / 3600) + ' ชั่วโมงที่แล้ว';
+  if (s < 604800) return Math.floor(s / 86400) + ' วันที่แล้ว';
+  return new Date(iso).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
+}
+const AV_COLORS = ['#00A859', '#00A4F1', '#7C3AED', '#F59E0B', '#F43F5E', '#0EA5E9', '#00793F'];
+function avatar(name, size = 38) {
+  const n = String(name || '?'); let h = 0; for (const ch of n) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return `<span class="avatar" style="width:${size}px;height:${size}px;font-size:${size * .4}px;background:${AV_COLORS[h % AV_COLORS.length]}">${esc(n.trim().charAt(0).toUpperCase())}</span>`;
+}
+function stars(r) { return `<span class="stars">${[1, 2, 3, 4, 5].map(i => ic('star', i <= r ? 'full' : '')).join('')}</span>`; }
+function fileExt(name) { return (String(name).split('.').pop() || '').toUpperCase().slice(0, 4); }
+const EXT_COLOR = { PDF: '#C8483B', DOCX: '#3A6EA5', DOC: '#3A6EA5', PPTX: '#D9772B', PPT: '#D9772B', ZIP: '#7C3AED', PNG: '#10B981', JPG: '#10B981', JPEG: '#10B981' };
+function fileIcon(name) { const e = fileExt(name); return `<span class="file-ico" style="background:${EXT_COLOR[e] || '#0EA5E9'}">${esc(e || 'FILE')}</span>`; }
+function readFile(file) {
+  return new Promise((res, rej) => {
+    if (file.size > CONFIG.MAX_FILE) return rej(new Error('ไฟล์ใหญ่เกิน 10MB'));
+    const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(new Error('อ่านไฟล์ไม่สำเร็จ')); r.readAsDataURL(file);
+  });
+}
+function downloadDataUrl(dataUrl, name) { if (/^https?:/.test(dataUrl)) { window.open(dataUrl + (dataUrl.includes('/storage/v1/object/public/') ? (dataUrl.includes('?') ? '&' : '?') + 'download=' + encodeURIComponent(name || 'file') : ''), '_blank', 'noopener'); return; } const a = document.createElement('a'); a.href = dataUrl; a.download = name || 'file'; document.body.appendChild(a); a.click(); a.remove(); }
+function toast(msg, err = false) {
+  const t = document.createElement('div'); t.className = 'toast' + (err ? ' err' : ''); t.innerHTML = (err ? '' : ic('check')) + esc(msg);
+  $('#toasts').appendChild(t); setTimeout(() => t.remove(), 3200);
+}
+function videoInfo(url) {
+  const u = String(url || '');
+  let m = u.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/);
+  if (m) return { kind: 'YouTube', embed: `https://www.youtube.com/embed/${m[1]}?autoplay=1`, thumb: `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` };
+  m = u.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
+  if (m) return { kind: 'Google Drive', embed: `https://drive.google.com/file/d/${m[1]}/preview`, thumb: '' };
+  if (u.startsWith('data:video') || u.includes('/storage/v1/object/public/')) return { kind: 'ไฟล์วิดีโอ', file: u, thumb: '' };
+  return { kind: 'ลิงก์', link: u, thumb: '' };
+}
+
+/* =========================================================
+   Mock backend (โหมดสาธิต) — จำลอง API เดียวกับ FastAPI
+   ========================================================= */
+const Mock = (() => {
+  const KEY = 'us_demo_db_v3';
+  const now = () => new Date().toISOString();
+  const past = h => new Date(Date.now() - h * 3600e3).toISOString();
+  let db;
+  function seed() {
+    const subjects = [['ITE-201', 'โครงสร้างข้อมูลและอัลกอริทึม'], ['ITE-222', 'ระบบฐานข้อมูล'], ['ITE-231', 'เครือข่ายคอมพิวเตอร์'],
+      ['ITE-241', 'การพัฒนาเว็บแอปพลิเคชัน'], ['ITE-312', 'การวิเคราะห์และออกแบบระบบ'], ['ITE-351', 'ความมั่นคงปลอดภัยไซเบอร์']]
+      .map(([code, name], i) => ({ subject_id: i + 1, code, name }));
+    const txt = s => 'data:text/plain;base64,' + btoa(unescape(encodeURIComponent(s)));
+    const svgImg = (bg, label) => 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><rect width="400" height="300" fill="${bg}"/><text x="200" y="165" font-size="64" text-anchor="middle">${label}</text></svg>`);
+    return {
+      seq: 100,
+      users: [
+        { user_id: 1, email: 'admin@pim.ac.th', password: 'admin1234', display_name: 'ผู้ดูแลระบบ', department: CONFIG.DEPARTMENT, year: 4, role: 'admin', is_banned: false, created_at: past(900), last_login: past(2) },
+        { user_id: 2, email: 'demo@pim.ac.th', password: 'demo1234', display_name: 'นักศึกษาทดลอง', department: CONFIG.DEPARTMENT, year: 2, role: 'user', is_banned: false, created_at: past(400), last_login: past(1) },
+        { user_id: 3, email: 'somchai.k@pim.ac.th', password: 'pass1234', display_name: 'สมชาย ใจดี', department: CONFIG.DEPARTMENT, year: 4, role: 'user', is_banned: false, created_at: past(300), last_login: past(20) },
+        { user_id: 4, email: 'nicha.p@pim.ac.th', password: 'pass1234', display_name: 'ณิชา พรมมา', department: CONFIG.DEPARTMENT, year: 3, role: 'user', is_banned: false, created_at: past(120), last_login: past(5) },
+      ],
+      subjects,
+      notes: [
+        { note_id: 1, title: 'สรุป Big-O และ Sorting ครบทุกแบบ', description: 'สรุปจากที่อาจารย์สอน + ตัวอย่างโจทย์', subject_name: subjects[0].name, note_type: 'ชีทสรุป', file_name: 'big-o-sorting.txt', file_size: 2048, file_data: txt('สรุป Big-O (ตัวอย่างไฟล์สาธิต)'), uploader: 'สมชาย ใจดี', uploader_id: 3, downloads: 42, is_hidden: false, created_at: past(70) },
+        { note_id: 2, title: 'ข้อสอบเก่า Database กลางภาค 2/2568', description: 'มีเฉลยท้ายไฟล์', subject_name: subjects[1].name, note_type: 'ข้อสอบเก่า', file_name: 'db-midterm.txt', file_size: 4096, file_data: txt('ข้อสอบเก่า DB (ไฟล์สาธิต)'), uploader: 'ณิชา พรมมา', uploader_id: 4, downloads: 87, is_hidden: false, created_at: past(30) },
+        { note_id: 3, title: 'Subnetting cheat sheet', description: 'ตาราง CIDR + วิธีคิดเร็ว', subject_name: subjects[2].name, note_type: 'ชีทสรุป', file_name: 'subnetting.txt', file_size: 1500, file_data: txt('Subnetting (ไฟล์สาธิต)'), uploader: 'สมชาย ใจดี', uploader_id: 3, downloads: 31, is_hidden: false, created_at: past(10) },
+        { note_id: 4, title: 'OWASP Top 10 สรุปภาษาไทย', description: '', subject_name: subjects[5].name, note_type: 'สไลด์บรรยาย', file_name: 'owasp-top10.txt', file_size: 3000, file_data: txt('OWASP (ไฟล์สาธิต)'), uploader: 'นักศึกษาทดลอง', uploader_id: 2, downloads: 12, is_hidden: false, created_at: past(4) },
+      ],
+      items: [
+        { item_id: 1, name: 'หนังสือ Database System Concepts', description: 'ใช้เรียนวิชาฐานข้อมูล มีไฮไลต์นิดหน่อย', category: 'หนังสือเรียน', item_condition: 'สภาพดี', sharing_type: 'FOR_SALE', price: 350, status: 'AVAILABLE', contact: 'LINE: somchai.k', owner_id: 3, owner_name: 'สมชาย ใจดี', reserved_by: null, reserved_by_id: null, image_data: svgImg('#E0F4FE', '📘'), is_hidden: false, created_at: past(50) },
+        { item_id: 2, name: 'เมาส์ Logitech M331', description: 'ยังใช้ได้ปกติ แจกน้องปี 1', category: 'อุปกรณ์ไอที', item_condition: 'สภาพดีมาก', sharing_type: 'FREE', price: null, status: 'AVAILABLE', contact: 'IG: nicha.pm', owner_id: 4, owner_name: 'ณิชา พรมมา', reserved_by: null, reserved_by_id: null, image_data: svgImg('#ECFDF5', '🖱️'), is_hidden: false, created_at: past(20) },
+        { item_id: 4, name: 'เครื่องคิดเลข Casio fx-991EX', description: 'ใช้สอบวิชาคณิตศาสตร์ดิสครีต', category: 'อุปกรณ์การเรียน', item_condition: 'สภาพดีมาก', sharing_type: 'FOR_SALE', price: 290, status: 'AVAILABLE', contact: 'LINE: somchai.k', owner_id: 3, owner_name: 'สมชาย ใจดี', reserved_by: null, reserved_by_id: null, image_data: svgImg('#FFFBEA', '🧮'), is_hidden: false, created_at: past(30) },
+        { item_id: 5, name: 'หนังสือ Python เบื้องต้น', description: 'แจกน้องปี 1 ที่เพิ่งเริ่มเขียนโปรแกรม', category: 'หนังสือเรียน', item_condition: 'มีรอยใช้งาน', sharing_type: 'FREE', price: null, status: 'AVAILABLE', contact: 'IG: nicha.pm', owner_id: 4, owner_name: 'ณิชา พรมมา', reserved_by: null, reserved_by_id: null, image_data: svgImg('#F0F9FF', '🐍'), is_hidden: false, created_at: past(14) },
+        { item_id: 6, name: 'คีย์บอร์ด Mechanical Blue switch', description: 'ปุ่มครบ ไฟ RGB ยังติด', category: 'อุปกรณ์ไอที', item_condition: 'สภาพดี', sharing_type: 'FOR_SALE', price: 450, status: 'AVAILABLE', contact: 'LINE: somchai.k', owner_id: 3, owner_name: 'สมชาย ใจดี', reserved_by: null, reserved_by_id: null, image_data: svgImg('#F5F3FF', '⌨️'), is_hidden: false, created_at: past(12) },
+        { item_id: 7, name: 'สาย LAN + หัว RJ45 + คีมเข้าหัว', description: 'ชุดแล็บ Network ใช้ครบเทอม', category: 'อุปกรณ์ไอที', item_condition: 'สภาพดี', sharing_type: 'FREE', price: null, status: 'AVAILABLE', contact: 'LINE: somchai.k', owner_id: 3, owner_name: 'สมชาย ใจดี', reserved_by: null, reserved_by_id: null, image_data: svgImg('#ECFDF5', '🔌'), is_hidden: false, created_at: past(9) },
+        { item_id: 8, name: 'ชีทเย็บเล่ม Data Structure', description: 'ปริ้นท์แล้วจดโน้ตเพิ่ม', category: 'อุปกรณ์การเรียน', item_condition: 'มีรอยใช้งาน', sharing_type: 'FOR_SALE', price: 60, status: 'AVAILABLE', contact: 'IG: nicha.pm', owner_id: 4, owner_name: 'ณิชา พรมมา', reserved_by: null, reserved_by_id: null, image_data: svgImg('#FFF1F2', '📒'), is_hidden: false, created_at: past(6) },
+        { item_id: 9, name: 'หูฟัง USB สำหรับเรียนออนไลน์', description: 'มีไมค์ ใช้ได้ปกติ', category: 'อุปกรณ์ไอที', item_condition: 'สภาพดี', sharing_type: 'FREE', price: null, status: 'AVAILABLE', contact: 'LINE: somchai.k', owner_id: 3, owner_name: 'สมชาย ใจดี', reserved_by: null, reserved_by_id: null, image_data: svgImg('#E0F4FE', '🎧'), is_hidden: false, created_at: past(3) },
+        { item_id: 3, name: 'Arduino Uno + สายไฟชุด', description: 'จากวิชา IoT', category: 'อุปกรณ์ไอที', item_condition: 'มีรอยใช้งาน', sharing_type: 'FOR_SALE', price: 250, status: 'RESERVED', contact: 'LINE: demo', owner_id: 2, owner_name: 'นักศึกษาทดลอง', reserved_by: 'ณิชา พรมมา', reserved_by_id: 4, image_data: svgImg('#FFFBEA', '🔧'), is_hidden: false, created_at: past(8) },
+      ],
+      threads: [
+        { thread_id: 1, title: 'ใครมีแนวข้อสอบ Network ไฟนอลบ้างครับ', body: 'อยากได้แนวเรื่อง Routing protocol กับ VLAN', tag: 'ถามหาสื่อการเรียน', author: 'นักศึกษาทดลอง', author_id: 2, is_pinned: false, is_locked: false, is_hidden: false, created_at: past(26) },
+        { thread_id: 2, title: 'แชร์ประสบการณ์ฝึกงานสาย IT Support', body: 'ฝึกงานมา 6 เดือน มีอะไรอยากรู้ถามได้เลย', tag: 'ฝึกงาน/สหกิจ', author: 'สมชาย ใจดี', author_id: 3, is_pinned: true, is_locked: false, is_hidden: false, created_at: past(60) },
+        { thread_id: 3, title: 'Python recursion โจทย์ Tower of Hanoi งงมาก', body: 'base case ควรเป็นยังไงครับ', tag: 'ปรึกษาโจทย์โปรแกรมมิ่ง', author: 'ณิชา พรมมา', author_id: 4, is_pinned: false, is_locked: false, is_hidden: false, created_at: past(6) },
+      ],
+      replies: [
+        { reply_id: 1, thread_id: 1, reply_text: 'ผมมีของปีที่แล้ว เดี๋ยวลงใน NoteShare ให้นะ', attachment_url: '', attachment_name: '', reply_by: 'สมชาย ใจดี', reply_by_id: 3, created_at: past(25) },
+        { reply_id: 2, thread_id: 3, reply_text: 'base case คือตอน n == 1 ย้ายแผ่นเดียวไปเลยครับ ดูโค้ดตัวอย่างในไฟล์แนบ', attachment_url: txt('def hanoi(n, a, b, c):\n    if n == 1:\n        print(a, "->", c); return\n    hanoi(n-1, a, c, b)\n    print(a, "->", c)\n    hanoi(n-1, b, a, c)\n'), attachment_name: 'hanoi.py', reply_by: 'สมชาย ใจดี', reply_by_id: 3, created_at: past(5) },
+      ],
+      reviews: [
+        { review_id: 1, media_name: 'CS50x (Harvard)', media_type: 'คอร์สออนไลน์', rating: 5, content: 'ปูพื้นฐานดีมาก ฟรีด้วย แนะนำน้องปี 1', author: 'สมชาย ใจดี', author_id: 3, helpful: 14, is_hidden: false, created_at: past(100) },
+        { review_id: 2, media_name: 'Head First Design Patterns', media_type: 'หนังสือ', rating: 4, content: 'อ่านง่าย ภาพเยอะ เหมาะกับวิชา SA', author: 'ณิชา พรมมา', author_id: 4, helpful: 6, is_hidden: false, created_at: past(40) },
+      ],
+      votes: [],
+      videos: [
+        { video_id: 1, title: 'ติว SQL JOIN ภายใน 20 นาที', url: 'https://www.youtube.com/watch?v=9yeOJ0ZMUYw', subject_name: subjects[1].name, duration: '20:14', views: 128, uploader: 'ณิชา พรมมา', uploader_id: 4, is_hidden: false, created_at: past(80) },
+        { video_id: 2, title: 'สรุป OSI Model 7 Layers', url: 'https://www.youtube.com/watch?v=vv4y_uOneC0', subject_name: subjects[2].name, duration: '12:30', views: 64, uploader: 'สมชาย ใจดี', uploader_id: 3, is_hidden: false, created_at: past(15) },
+      ],
+      notifs: [{ notif_id: 1, user_id: null, kind: 'announce', message: '📢 ยินดีต้อนรับสู่ UniShare เวอร์ชันใหม่!', link: 'home', is_read: false, created_at: past(3) }],
+      reports: [{ report_id: 1, target_type: 'thread', target_id: 1, reason: 'ทดสอบระบบรายงาน', reporter: 'ณิชา พรมมา', reporter_id: 4, status: 'OPEN', created_at: past(2) }],
+      anns: [{ ann_id: 1, title: 'เปิดใช้งาน UniShare v2', body: 'มีระบบแนบไฟล์ในคอมเมนต์ แยกรายวิชา และโหมดแจกฟรี/ขายแล้ว', level: 'success', is_active: true, created_by: 'ผู้ดูแลระบบ', created_at: past(3) }],
+      audit: [], seen: {},
+    };
+  }
+  function load() { try { db = JSON.parse(store.getItem(KEY)) } catch { db = null } if (!db) { db = seed(); save(); } }
+  function save() { try { store.setItem(KEY, JSON.stringify(db)) } catch (e) { throw err(413, 'พื้นที่เก็บข้อมูลในเบราว์เซอร์เต็ม ลองไฟล์ที่เล็กลง') } }
+  const err = (status, detail) => Object.assign(new Error(detail), { status });
+  const id = () => ++db.seq;
+  const has = (s, q) => String(s || '').toLowerCase().includes(q.toLowerCase());
+  const pub = u => { const { password, ...r } = u; return r; };
+  const byDate = (a, b) => b.created_at.localeCompare(a.created_at);
+  function notify(message, user_id = null, kind = 'info', link = '') { db.notifs.unshift({ notif_id: id(), user_id, kind, message, link, is_read: false, created_at: now() }); }
+  function audit(u, action, detail = '') { db.audit.unshift({ log_id: id(), actor: u.display_name, action, detail, created_at: now() }); }
+  const canManage = (u, owner) => u.role === 'admin' || u.user_id === owner;
+  const login = u => { u.last_login = now(); return { token: 'demo.' + u.user_id, user: pub(u) }; };
+  const vis = (u, arr) => u.role === 'admin' ? arr : arr.filter(x => !x.is_hidden);
+  const threadOut = t => ({ ...t, reply_count: db.replies.filter(r => r.thread_id === t.thread_id).length });
+  const COLL = { note: ['notes', 'note_id', 'title', 'uploader'], item: ['items', 'item_id', 'name', 'owner_name'], thread: ['threads', 'thread_id', 'title', 'author'], reply: ['replies', 'reply_id', 'reply_text', 'reply_by'], review: ['reviews', 'review_id', 'media_name', 'author'], video: ['videos', 'video_id', 'title', 'uploader'] };
+  function find(coll, key, v) { const x = db[coll].find(r => r[key] === v); if (!x) throw err(404, 'ไม่พบข้อมูล'); return x; }
+  function remove(coll, key, v) { db[coll] = db[coll].filter(r => r[key] !== v); }
+  const adminOnly = u => { if (u.role !== 'admin') throw err(403, 'สำหรับผู้ดูแลระบบเท่านั้น'); };
+
+  const routes = [
+    ['GET', /^\/api\/health$/, () => ({ ok: true, demo: true }), true],
+    ['POST', /^\/api\/auth\/register$/, (_, b) => {
+      const email = String(b.email || '').trim().toLowerCase();
+      if (!email.endsWith(CONFIG.DOMAIN)) throw err(400, `ต้องใช้อีเมลสถาบัน ${CONFIG.DOMAIN} เท่านั้น`);
+      if ((b.password || '').length < 6) throw err(400, 'รหัสผ่านอย่างน้อย 6 ตัวอักษร');
+      if (db.users.some(u => u.email === email)) throw err(409, 'อีเมลนี้ลงทะเบียนแล้ว');
+      const u = { user_id: id(), email, password: b.password, display_name: b.display_name.trim(), department: CONFIG.DEPARTMENT, year: +b.year || 1, role: 'user', is_banned: false, created_at: now(), last_login: now() };
+      db.users.push(u); notify(`ยินดีต้อนรับ ${u.display_name} สู่ UniShare 🎉`, u.user_id, 'success'); return login(u);
+    }, true],
+    ['POST', /^\/api\/auth\/login$/, (_, b) => {
+      const email = String(b.email || '').trim().toLowerCase();
+      if (!email.endsWith(CONFIG.DOMAIN)) throw err(400, `ต้องใช้อีเมลสถาบัน ${CONFIG.DOMAIN} เท่านั้น`);
+      const u = db.users.find(x => x.email === email);
+      if (!u || u.password !== b.password) throw err(401, 'อีเมลหรือรหัสผ่านไม่ถูกต้อง');
+      if (u.is_banned) throw err(403, 'บัญชีนี้ถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ');
+      return login(u);
+    }, true],
+    ['POST', /^\/api\/auth\/demo$/, () => login(db.users.find(u => u.email === 'demo@pim.ac.th')), true],
+    ['GET', /^\/api\/auth\/me$/, (u) => pub(u)],
+    ['PATCH', /^\/api\/auth\/me$/, (u, b) => { if (b.display_name) u.display_name = b.display_name.trim(); if (b.year) u.year = +b.year; return pub(u); }],
+    ['GET', /^\/api\/subjects$/, () => db.subjects.map(s => ({ ...s, note_count: db.notes.filter(n => n.subject_name === s.name && !n.is_hidden).length })), true],
+    ['GET', /^\/api\/announcements$/, () => db.anns.filter(a => a.is_active).sort(byDate), true],
+    ['GET', /^\/api\/overview$/, (u) => {
+      const n = db.notes.filter(x => !x.is_hidden), it = db.items.filter(x => !x.is_hidden), th = db.threads.filter(x => !x.is_hidden);
+      return { notes: n.length, items: it.filter(i => i.status !== 'SOLD').length, threads: th.length, reviews: db.reviews.filter(x => !x.is_hidden).length, videos: db.videos.filter(x => !x.is_hidden).length,
+        latest_notes: [...n].sort(byDate).slice(0, 4), latest_items: [...it].sort(byDate).slice(0, 4), hot_threads: [...th].sort(byDate).slice(0, 5).map(threadOut) };
+    }],
+    ['GET', /^\/api\/notes$/, (u, _, q) => {
+      let r = vis(u, db.notes).map(({ file_data, ...x }) => x);
+      if (q.q) r = r.filter(n => has(n.title, q.q) || has(n.file_name, q.q) || has(n.description, q.q));
+      if (q.subject) r = r.filter(n => n.subject_name === q.subject);
+      return r.sort(q.sort === 'popular' ? (a, b) => b.downloads - a.downloads : byDate);
+    }],
+    ['POST', /^\/api\/notes$/, (u, b) => {
+      const n = { note_id: id(), ...b, uploader: u.display_name, uploader_id: u.user_id, downloads: 0, is_hidden: false, created_at: now() };
+      db.notes.push(n); notify(`📄 ${u.display_name} อัปโหลดเอกสารใหม่ "${n.title}" (${n.subject_name})`, null, 'note', 'notes'); return n;
+    }],
+    ['GET', /^\/api\/notes\/(\d+)\/download$/, (u, _, q, m) => { const n = find('notes', 'note_id', +m[1]); n.downloads++; return n; }],
+    ['DELETE', /^\/api\/notes\/(\d+)$/, (u, _, q, m) => {
+      const n = find('notes', 'note_id', +m[1]); if (!canManage(u, n.uploader_id)) throw err(403, 'ลบได้เฉพาะเจ้าของไฟล์หรือผู้ดูแล');
+      if (u.user_id !== n.uploader_id) { audit(u, 'ลบเอกสาร', n.title); notify(`เอกสาร "${n.title}" ของคุณถูกลบโดยผู้ดูแลระบบ`, n.uploader_id, 'warning'); }
+      remove('notes', 'note_id', n.note_id); notify(`🗑️ ลบเอกสาร "${n.title}" สำเร็จ`, u.user_id, 'delete'); return { ok: true };
+    }],
+    ['GET', /^\/api\/items$/, (u, _, q) => {
+      let r = vis(u, db.items);
+      if (q.q) r = r.filter(i => has(i.name, q.q) || has(i.description, q.q));
+      if (q.type) r = r.filter(i => i.sharing_type === q.type);
+      if (q.status) r = r.filter(i => i.status === q.status);
+      if (q.category) r = r.filter(i => i.category === q.category);
+      return r.sort(byDate);
+    }],
+    ['POST', /^\/api\/items$/, (u, b) => {
+      if (b.sharing_type === 'FOR_SALE' && !(+b.price > 0)) throw err(400, 'กรุณาระบุราคาสำหรับสินค้าที่ขาย');
+      const i = { item_id: id(), ...b, price: b.sharing_type === 'FREE' ? null : +b.price, status: 'AVAILABLE', owner_id: u.user_id, owner_name: u.display_name, reserved_by: null, reserved_by_id: null, is_hidden: false, created_at: now() };
+      db.items.push(i); notify(`📦 ${u.display_name} ลงประกาศ "${i.name}" (${i.sharing_type === 'FREE' ? 'แจกฟรี' : 'ขาย ' + fmtNum(i.price) + ' บาท'})`, null, 'item', 'items'); return i;
+    }],
+    ['PATCH', /^\/api\/items\/(\d+)\/status$/, (u, b, q, m) => {
+      const i = find('items', 'item_id', +m[1]); const own = canManage(u, i.owner_id);
+      if (b.action === 'reserve') {
+        if (i.owner_id === u.user_id) throw err(400, 'ไม่สามารถจองของตัวเองได้');
+        if (i.status !== 'AVAILABLE') throw err(409, 'รายการนี้ถูกจองหรือขายไปแล้ว');
+        Object.assign(i, { status: 'RESERVED', reserved_by: u.display_name, reserved_by_id: u.user_id });
+        notify(`🔔 ${u.display_name} ${i.sharing_type === 'FREE' ? 'ขอรับ' : 'สนใจซื้อ'} "${i.name}" ของคุณ`, i.owner_id, 'item', 'items');
+      } else if (b.action === 'cancel') {
+        if (!(own || i.reserved_by_id === u.user_id)) throw err(403, 'ไม่มีสิทธิ์ยกเลิกการจองนี้');
+        if (i.reserved_by_id && i.reserved_by_id !== u.user_id) notify(`การจอง "${i.name}" ถูกยกเลิก`, i.reserved_by_id, 'warning', 'items');
+        Object.assign(i, { status: 'AVAILABLE', reserved_by: null, reserved_by_id: null });
+      } else {
+        if (!own) throw err(403, 'เฉพาะเจ้าของประกาศเท่านั้น');
+        i.status = b.action === 'sold' ? 'SOLD' : 'AVAILABLE'; if (b.action === 'available') Object.assign(i, { reserved_by: null, reserved_by_id: null });
+      }
+      return i;
+    }],
+    ['DELETE', /^\/api\/items\/(\d+)$/, (u, _, q, m) => {
+      const i = find('items', 'item_id', +m[1]); if (!canManage(u, i.owner_id)) throw err(403, 'ลบได้เฉพาะเจ้าของประกาศหรือผู้ดูแล');
+      if (u.user_id !== i.owner_id) { audit(u, 'ลบประกาศสิ่งของ', i.name); notify(`ประกาศ "${i.name}" ของคุณถูกลบโดยผู้ดูแลระบบ`, i.owner_id, 'warning'); }
+      remove('items', 'item_id', i.item_id); notify(`🗑️ ลบประกาศ "${i.name}" สำเร็จ`, u.user_id, 'delete'); return { ok: true };
+    }],
+    ['GET', /^\/api\/threads$/, (u, _, q) => {
+      let r = vis(u, db.threads); if (q.q) r = r.filter(t => has(t.title, q.q) || has(t.body, q.q)); if (q.tag) r = r.filter(t => t.tag === q.tag);
+      return r.sort((a, b) => (b.is_pinned - a.is_pinned) || byDate(a, b)).map(threadOut);
+    }],
+    ['GET', /^\/api\/threads\/(\d+)$/, (u, _, q, m) => {
+      const t = find('threads', 'thread_id', +m[1]); if (t.is_hidden && u.role !== 'admin') throw err(404, 'ไม่พบกระทู้');
+      return { ...threadOut(t), replies: db.replies.filter(r => r.thread_id === t.thread_id).sort((a, b) => a.created_at.localeCompare(b.created_at)) };
+    }],
+    ['POST', /^\/api\/threads$/, (u, b) => {
+      const t = { thread_id: id(), ...b, author: u.display_name, author_id: u.user_id, is_pinned: false, is_locked: false, is_hidden: false, created_at: now() };
+      db.threads.push(t); notify(`💬 กระทู้ใหม่: "${t.title}" โดย ${u.display_name}`, null, 'thread', 'threads'); return threadOut(t);
+    }],
+    ['POST', /^\/api\/threads\/(\d+)\/replies$/, (u, b, q, m) => {
+      const t = find('threads', 'thread_id', +m[1]);
+      if (t.is_locked && u.role !== 'admin') throw err(423, 'กระทู้นี้ถูกล็อก ไม่สามารถตอบได้');
+      if (!String(b.reply_text || '').trim() && !b.attachment_url) throw err(400, 'กรุณาพิมพ์ข้อความหรือแนบไฟล์');
+      const r = { reply_id: id(), thread_id: t.thread_id, reply_text: String(b.reply_text || '').trim(), attachment_url: b.attachment_url || '', attachment_name: b.attachment_name || '', reply_by: u.display_name, reply_by_id: u.user_id, created_at: now() };
+      db.replies.push(r); if (t.author_id !== u.user_id) notify(`💬 ${u.display_name} ตอบกระทู้ "${t.title}" ของคุณ`, t.author_id, 'reply', 'thread:' + t.thread_id); return r;
+    }],
+    ['DELETE', /^\/api\/threads\/(\d+)$/, (u, _, q, m) => {
+      const t = find('threads', 'thread_id', +m[1]); if (!canManage(u, t.author_id)) throw err(403, 'ลบได้เฉพาะเจ้าของกระทู้หรือผู้ดูแล');
+      if (u.user_id !== t.author_id) { audit(u, 'ลบกระทู้', t.title); notify(`กระทู้ "${t.title}" ของคุณถูกลบโดยผู้ดูแลระบบ`, t.author_id, 'warning'); }
+      remove('threads', 'thread_id', t.thread_id); db.replies = db.replies.filter(r => r.thread_id !== t.thread_id);
+      notify(`🗑️ ลบกระทู้ "${t.title}" สำเร็จ`, u.user_id, 'delete'); return { ok: true };
+    }],
+    ['DELETE', /^\/api\/replies\/(\d+)$/, (u, _, q, m) => {
+      const r = find('replies', 'reply_id', +m[1]); if (!canManage(u, r.reply_by_id)) throw err(403, 'ไม่มีสิทธิ์ลบความคิดเห็นนี้');
+      if (u.user_id !== r.reply_by_id) audit(u, 'ลบความคิดเห็น', r.reply_text.slice(0, 100));
+      remove('replies', 'reply_id', r.reply_id); notify('🗑️ ลบความคิดเห็นสำเร็จ', u.user_id, 'delete'); return { ok: true };
+    }],
+    ['GET', /^\/api\/reviews$/, (u, _, q) => {
+      let r = vis(u, db.reviews); if (q.q) r = r.filter(x => has(x.media_name, q.q) || has(x.content, q.q));
+      const sorter = { helpful: (a, b) => b.helpful - a.helpful, rating: (a, b) => b.rating - a.rating }[q.sort] || byDate;
+      return r.sort(sorter).map(x => ({ ...x, voted: db.votes.some(v => v.review_id === x.review_id && v.user_id === u.user_id) }));
+    }],
+    ['POST', /^\/api\/reviews$/, (u, b) => {
+      const r = { review_id: id(), ...b, rating: +b.rating, author: u.display_name, author_id: u.user_id, helpful: 0, is_hidden: false, created_at: now() };
+      db.reviews.push(r); notify(`⭐ ${u.display_name} รีวิว "${r.media_name}" (${r.rating}/5)`, null, 'review', 'reviews'); return r;
+    }],
+    ['POST', /^\/api\/reviews\/(\d+)\/helpful$/, (u, _, q, m) => {
+      const r = find('reviews', 'review_id', +m[1]); const i = db.votes.findIndex(v => v.review_id === r.review_id && v.user_id === u.user_id);
+      if (i >= 0) { db.votes.splice(i, 1); r.helpful = Math.max(0, r.helpful - 1); } else { db.votes.push({ review_id: r.review_id, user_id: u.user_id }); r.helpful++; }
+      return { ...r, voted: i < 0 };
+    }],
+    ['DELETE', /^\/api\/reviews\/(\d+)$/, (u, _, q, m) => {
+      const r = find('reviews', 'review_id', +m[1]); if (!canManage(u, r.author_id)) throw err(403, 'ลบได้เฉพาะเจ้าของรีวิวหรือผู้ดูแล');
+      if (u.user_id !== r.author_id) audit(u, 'ลบรีวิว', r.media_name);
+      remove('reviews', 'review_id', r.review_id); notify(`🗑️ ลบรีวิว "${r.media_name}" สำเร็จ`, u.user_id, 'delete'); return { ok: true };
+    }],
+    ['GET', /^\/api\/videos$/, (u, _, q) => { let r = vis(u, db.videos); if (q.q) r = r.filter(v => has(v.title, q.q)); if (q.subject) r = r.filter(v => v.subject_name === q.subject); return r.sort(byDate); }],
+    ['POST', /^\/api\/videos$/, (u, b) => {
+      const v = { video_id: id(), ...b, views: 0, uploader: u.display_name, uploader_id: u.user_id, is_hidden: false, created_at: now() };
+      db.videos.push(v); notify(`🎬 ${u.display_name} เพิ่มคลิป "${v.title}"`, null, 'video', 'videos'); return v;
+    }],
+    ['POST', /^\/api\/videos\/(\d+)\/view$/, (u, _, q, m) => { const v = find('videos', 'video_id', +m[1]); v.views++; return v; }],
+    ['DELETE', /^\/api\/videos\/(\d+)$/, (u, _, q, m) => {
+      const v = find('videos', 'video_id', +m[1]); if (!canManage(u, v.uploader_id)) throw err(403, 'ลบได้เฉพาะเจ้าของคลิปหรือผู้ดูแล');
+      if (u.user_id !== v.uploader_id) audit(u, 'ลบคลิป', v.title);
+      remove('videos', 'video_id', v.video_id); notify(`🗑️ ลบคลิป "${v.title}" สำเร็จ`, u.user_id, 'delete'); return { ok: true };
+    }],
+    ['GET', /^\/api\/notifications$/, (u) => {
+      const seen = db.seen[u.user_id] || '';
+      return db.notifs.filter(n => n.user_id === u.user_id || n.user_id === null).slice(0, 50)
+        .map(n => ({ ...n, is_read: n.user_id ? n.is_read : n.created_at <= seen }));
+    }],
+    ['POST', /^\/api\/notifications\/read-all$/, (u) => { db.notifs.forEach(n => { if (n.user_id === u.user_id) n.is_read = true; }); db.seen[u.user_id] = now(); return { ok: true }; }],
+    ['POST', /^\/api\/reports$/, (u, b) => {
+      db.reports.unshift({ report_id: id(), ...b, reporter: u.display_name, reporter_id: u.user_id, status: 'OPEN', created_at: now() });
+      db.users.filter(x => x.role === 'admin').forEach(a => notify(`🚩 มีการรายงานเนื้อหาใหม่ (${b.target_type}) จาก ${u.display_name}`, a.user_id, 'warning', 'admin'));
+      return { ok: true };
+    }],
+    ['GET', /^\/api\/admin\/stats$/, (u) => {
+      adminOnly(u); const week = new Date(Date.now() - 7 * 864e5).toISOString();
+      const all = ['notes', 'items', 'threads', 'replies', 'reviews', 'videos'].flatMap(k => db[k]);
+      const activity = [...Array(7)].map((_, i) => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - (6 - i)); const e = new Date(d.getTime() + 864e5);
+        return { date: d.toISOString().slice(0, 10), count: all.filter(x => new Date(x.created_at) >= d && new Date(x.created_at) < e).length }; });
+      const bs = {}; db.notes.forEach(n => bs[n.subject_name] = (bs[n.subject_name] || 0) + 1);
+      return { users: db.users.length, new_users_week: db.users.filter(x => x.created_at >= week).length, banned: db.users.filter(x => x.is_banned).length,
+        notes: db.notes.length, items: db.items.length, items_free: db.items.filter(i => i.sharing_type === 'FREE').length, items_sale: db.items.filter(i => i.sharing_type === 'FOR_SALE').length,
+        items_sold: db.items.filter(i => i.status === 'SOLD').length, threads: db.threads.length, replies: db.replies.length, reviews: db.reviews.length, videos: db.videos.length,
+        open_reports: db.reports.filter(r => r.status === 'OPEN').length, downloads: db.notes.reduce((s, n) => s + n.downloads, 0), activity,
+        by_subject: Object.entries(bs).map(([subject, count]) => ({ subject, count })).sort((a, b) => b.count - a.count) };
+    }],
+    ['GET', /^\/api\/admin\/users$/, (u, _, q) => { adminOnly(u); return db.users.filter(x => !q.q || has(x.email, q.q) || has(x.display_name, q.q)).map(pub).sort(byDate); }],
+    ['PATCH', /^\/api\/admin\/users\/(\d+)$/, (u, b, q, m) => {
+      adminOnly(u); const t = find('users', 'user_id', +m[1]); if (t.user_id === u.user_id) throw err(400, 'ไม่สามารถเปลี่ยนสิทธิ์หรือระงับบัญชีตัวเองได้');
+      if (b.role && b.role !== t.role) { t.role = b.role; audit(u, 'เปลี่ยนสิทธิ์ผู้ใช้', `${t.email} → ${b.role}`); notify(`สิทธิ์ของคุณถูกเปลี่ยนเป็น ${b.role === 'admin' ? 'ผู้ดูแลระบบ' : 'ผู้ใช้ทั่วไป'}`, t.user_id); }
+      if (b.is_banned != null && b.is_banned !== t.is_banned) { t.is_banned = b.is_banned; audit(u, b.is_banned ? 'ระงับบัญชี' : 'ปลดระงับบัญชี', t.email); }
+      return pub(t);
+    }],
+    ['GET', /^\/api\/admin\/content\/(\w+)$/, (u, _, q, m) => {
+      adminOnly(u); const c = COLL[m[1]]; if (!c) throw err(404, 'ประเภทไม่ถูกต้อง'); const [coll, pk, tc, oc] = c;
+      return db[coll].filter(r => !q.q || has(r[tc], q.q)).sort(byDate).map(r => ({ id: r[pk], title: r[tc], owner: r[oc], is_hidden: !!r.is_hidden, is_pinned: r.is_pinned ?? null, is_locked: r.is_locked ?? null, created_at: r.created_at }));
+    }],
+    ['PATCH', /^\/api\/admin\/content\/(\w+)\/(\d+)$/, (u, b, q, m) => {
+      adminOnly(u); const [coll, pk, tc] = COLL[m[1]]; const r = find(coll, pk, +m[2]);
+      Object.entries(b).forEach(([k, v]) => { if (k in r) { r[k] = v; audit(u, `ตั้งค่า ${k}=${v}`, `${m[1]}#${m[2]} ${r[tc]}`.slice(0, 200)); } }); return { ok: true };
+    }],
+    ['DELETE', /^\/api\/admin\/content\/(\w+)\/(\d+)$/, (u, _, q, m) => {
+      adminOnly(u); const [coll, pk, tc] = COLL[m[1]]; const r = find(coll, pk, +m[2]); audit(u, `ลบ ${m[1]}`, String(r[tc]).slice(0, 200));
+      remove(coll, pk, r[pk]); if (m[1] === 'thread') db.replies = db.replies.filter(x => x.thread_id !== r[pk]);
+      db.reports.forEach(rep => { if (rep.target_type === m[1] && rep.target_id === r[pk]) rep.status = 'RESOLVED'; }); return { ok: true };
+    }],
+    ['GET', /^\/api\/admin\/reports$/, (u, _, q) => {
+      adminOnly(u); return db.reports.filter(r => !q.status || r.status === q.status).map(r => {
+        const [coll, pk, tc] = COLL[r.target_type]; const t = db[coll].find(x => x[pk] === r.target_id);
+        return { ...r, target_title: t ? String(t[tc]).slice(0, 120) : '(ถูกลบแล้ว)', target_exists: !!t };
+      });
+    }],
+    ['PATCH', /^\/api\/admin\/reports\/(\d+)$/, (u, b, q, m) => { adminOnly(u); find('reports', 'report_id', +m[1]).status = b.status; audit(u, `รายงาน #${m[1]} → ${b.status}`); return { ok: true }; }],
+    ['GET', /^\/api\/admin\/announcements$/, (u) => { adminOnly(u); return [...db.anns].sort(byDate); }],
+    ['POST', /^\/api\/admin\/announcements$/, (u, b) => { adminOnly(u); const a = { ann_id: id(), ...b, is_active: true, created_by: u.display_name, created_at: now() }; db.anns.push(a); notify(`📢 ประกาศ: ${a.title}`, null, 'announce', 'home'); audit(u, 'สร้างประกาศ', a.title); return { ok: true }; }],
+    ['PATCH', /^\/api\/admin\/announcements\/(\d+)$/, (u, _, q, m) => { adminOnly(u); const a = find('anns', 'ann_id', +m[1]); a.is_active = !a.is_active; return { ok: true }; }],
+    ['DELETE', /^\/api\/admin\/announcements\/(\d+)$/, (u, _, q, m) => { adminOnly(u); const a = find('anns', 'ann_id', +m[1]); audit(u, 'ลบประกาศ', a.title); remove('anns', 'ann_id', a.ann_id); return { ok: true }; }],
+    ['POST', /^\/api\/admin\/subjects$/, (u, b) => { adminOnly(u); if (db.subjects.some(s => s.name === b.name.trim())) throw err(409, 'มีรายวิชานี้แล้ว'); db.subjects.push({ subject_id: id(), code: b.code || '', name: b.name.trim() }); audit(u, 'เพิ่มรายวิชา', b.name); return { ok: true }; }],
+    ['DELETE', /^\/api\/admin\/subjects\/(\d+)$/, (u, _, q, m) => { adminOnly(u); const s = find('subjects', 'subject_id', +m[1]); if (db.notes.some(n => n.subject_name === s.name)) throw err(409, 'ยังมีเอกสารในรายวิชานี้ ลบเอกสารหรือย้ายก่อน'); audit(u, 'ลบรายวิชา', s.name); remove('subjects', 'subject_id', s.subject_id); return { ok: true }; }],
+    ['GET', /^\/api\/admin\/audit$/, (u) => { adminOnly(u); return db.audit.slice(0, 200); }],
+  ];
+
+  async function handle(method, url, body, token) {
+    load();
+    const [path, qs] = url.split('?'); const q = Object.fromEntries(new URLSearchParams(qs || ''));
+    for (const [m, re, fn, open] of routes) {
+      const mt = path.match(re); if (m !== method || !mt) continue;
+      let user = null;
+      if (!open) {
+        const uid = token && token.startsWith('demo.') ? +token.slice(5) : 0; user = db.users.find(x => x.user_id === uid);
+        if (!user) throw err(401, 'กรุณาเข้าสู่ระบบ'); if (user.is_banned) throw err(403, 'บัญชีนี้ถูกระงับการใช้งาน');
+      }
+      const out = fn(user, body || {}, q, mt); save(); await new Promise(r => setTimeout(r, 100));
+      return JSON.parse(JSON.stringify(out));
+    }
+    throw err(404, 'ไม่พบ endpoint');
+  }
+  return { handle, reset() { store.removeItem(KEY); } };
+})();
+
+
+/* =========================================================
+   Supabase backend — ใช้ API ชุดเดียวกับโหมดสาธิต
+   (ข้อมูลจริง, สมัครสมาชิก + ยืนยันอีเมล, ไฟล์เก็บใน Storage)
+   ========================================================= */
+const SB_CFG = { url: window.UNISHARE_SUPABASE_URL || '', key: window.UNISHARE_SUPABASE_KEY || '' };
+const SB = (() => {
+  let sb = null, me = null;
+  const err = (status, detail) => Object.assign(new Error(detail), { status });
+  const client = () => sb || (sb = window.supabase.createClient(SB_CFG.url, SB_CFG.key, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }));
+  function thai(m = '') {
+    if (/pim\.ac\.th|Database error saving new user/i.test(m)) return 'ต้องใช้อีเมลสถาบัน @pim.ac.th เท่านั้น';
+    if (/Invalid login credentials/i.test(m)) return 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
+    if (/Email not confirmed/i.test(m)) return 'ยังไม่ได้ยืนยันอีเมล กรุณากดลิงก์ยืนยันในอีเมลของคุณ (หรือกด "ส่งอีเมลยืนยันอีกครั้ง")';
+    if (/already registered|already been registered/i.test(m)) return 'อีเมลนี้ลงทะเบียนแล้ว';
+    if (/rate limit|security purposes|too many/i.test(m)) return 'ส่งคำขอบ่อยเกินไป กรุณารอสักครู่แล้วลองใหม่';
+    if (/Password should be at least/i.test(m)) return 'รหัสผ่านอย่างน้อย 6 ตัวอักษร';
+    if (/row-level security|permission denied/i.test(m)) return 'คุณไม่มีสิทธิ์ทำรายการนี้ (บัญชีอาจถูกระงับ หรือกระทู้ถูกล็อก)';
+    if (/sale_needs_price/i.test(m)) return 'กรุณาระบุราคาสำหรับสินค้าที่ขาย';
+    if (/exceeded the maximum allowed size|Payload too large/i.test(m)) return 'ไฟล์ใหญ่เกิน 10MB';
+    if (/duplicate key.*subjects/i.test(m)) return 'มีรายวิชานี้แล้ว';
+    if (/violates foreign key.*subject/i.test(m)) return 'ยังมีเอกสารในรายวิชานี้ ลบเอกสารก่อน';
+    if (/Failed to fetch|NetworkError/i.test(m)) return 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ ตรวจสอบอินเทอร์เน็ตแล้วลองใหม่';
+    return m || 'เกิดข้อผิดพลาด';
+  }
+  async function q(p) {
+    const { data, error, count } = await p;
+    if (error) throw err(/JWT|not authenticated/i.test(error.message) ? 401 : 400, thai(error.message));
+    return count != null && data == null ? count : data;
+  }
+  const cnt = (t, f = x => x) => q(f(client().from(t).select('*', { count: 'exact', head: true })));
+  const clean = s => String(s || '').replace(/[,()%*\\]/g, ' ').trim();
+  const userOut = p => ({ ...p, user_id: p.id });
+  const uid = () => me && me.user_id;
+  const isAdm = () => me && me.role === 'admin';
+  const byDate = (a, b) => String(b.created_at).localeCompare(String(a.created_at));
+  async function loadMe() {
+    const { data: { session } } = await client().auth.getSession();
+    if (!session) { me = null; return null; }
+    const p = await q(client().from('profiles').select('*').eq('id', session.user.id).maybeSingle());
+    me = p ? userOut(p) : null; return me;
+  }
+  async function notify(message, user_id = null, kind = 'info', link = '') { try { await client().from('notifications').insert({ user_id, kind, message: message.slice(0, 500), link }); } catch { } }
+  async function audit(action, detail = '') { try { await client().from('audit_logs').insert({ actor: me.display_name, action, detail: String(detail).slice(0, 500) }); } catch { } }
+  async function upload(dataUrl, name) {
+    if (!dataUrl || !String(dataUrl).startsWith('data:')) return { url: dataUrl || '', path: null };
+    const blob = await (await fetch(dataUrl)).blob();
+    if (blob.size > CONFIG.MAX_FILE) throw err(413, 'ไฟล์ใหญ่เกิน 10MB');
+    const safeName = (String(name || 'file').replace(/[^\w.\-]+/g, '_').replace(/^_+/, '') || 'file').slice(-80);
+    const path = `${uid()}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${safeName}`;
+    await q(client().storage.from('uploads').upload(path, blob, { contentType: blob.type || 'application/octet-stream', upsert: false }));
+    return { url: client().storage.from('uploads').getPublicUrl(path).data.publicUrl, path };
+  }
+  async function removeFile(path) { if (path) { try { await client().storage.from('uploads').remove([path]); } catch { } } }
+  const replyCount = t => ({ ...t, reply_count: (t.thread_replies && t.thread_replies[0] && t.thread_replies[0].count) || 0, thread_replies: undefined });
+  const TBL = {
+    note: ['notes', 'note_id', 'title', 'uploader', 'uploader_id', 'file_path'], item: ['items', 'item_id', 'name', 'owner_name', 'owner_id', 'image_path'],
+    thread: ['threads', 'thread_id', 'title', 'author', 'author_id', null], reply: ['thread_replies', 'reply_id', 'reply_text', 'reply_by', 'reply_by_id', 'attachment_path'],
+    review: ['reviews', 'review_id', 'media_name', 'author', 'author_id', null], video: ['videos', 'video_id', 'title', 'uploader', 'uploader_id', 'file_path'],
+  };
+  const LABEL = { note: 'เอกสาร', item: 'ประกาศ', thread: 'กระทู้', reply: 'ความคิดเห็น', review: 'รีวิว', video: 'คลิป' };
+  async function deleteOwned(type, id) {
+    const [t, pk, tc, , oc, fc] = TBL[type];
+    const row = await q(client().from(t).select('*').eq(pk, id).maybeSingle());
+    if (!row) throw err(404, 'ไม่พบข้อมูล');
+    if (row[oc] !== uid() && !isAdm()) throw err(403, 'ลบได้เฉพาะเจ้าของหรือผู้ดูแล');
+    const del = await q(client().from(t).delete().eq(pk, id).select(pk));
+    if (!del || !del.length) throw err(403, 'ลบไม่สำเร็จ (ไม่มีสิทธิ์)');
+    if (fc) await removeFile(row[fc]);
+    const title = String(row[tc]).slice(0, 100);
+    if (row[oc] !== uid()) { await audit('ลบ' + LABEL[type], title); if (type !== 'reply') await notify(`${LABEL[type]} "${title}" ของคุณถูกลบโดยผู้ดูแลระบบ`, row[oc], 'warning'); }
+    await notify(`🗑️ ลบ${LABEL[type]}${type === 'reply' ? '' : ` "${title}"`} สำเร็จ`, uid(), 'delete');
+    return { ok: true };
+  }
+  async function contactsFor(items) {
+    if (!items.length) return items;
+    const rows = await q(client().from('item_contacts').select('*').in('item_id', items.map(i => i.item_id)));
+    const m = Object.fromEntries((rows || []).map(r => [r.item_id, r.contact]));
+    return items.map(i => ({ ...i, price: i.price == null ? null : +i.price, contact: m[i.item_id] || '' }));
+  }
+
+  const routes = [
+    ['GET', /^\/api\/health$/, async () => ({ ok: true })],
+    ['GET', /^\/api\/auth\/me$/, async () => { const u = await loadMe(); if (!u) throw err(401, 'กรุณาเข้าสู่ระบบ'); return u; }],
+    ['PATCH', /^\/api\/auth\/me$/, async (b) => {
+      const p = await q(client().from('profiles').update({ display_name: String(b.display_name || '').trim().slice(0, 100), year: +b.year }).eq('id', uid()).select().single());
+      me = userOut(p); return me;
+    }],
+    ['GET', /^\/api\/subjects$/, async () => {
+      const [subs, notes] = await Promise.all([q(client().from('subjects').select('*').order('code')), q(client().from('notes').select('subject_name').eq('is_hidden', false))]);
+      const c = {}; (notes || []).forEach(n => c[n.subject_name] = (c[n.subject_name] || 0) + 1);
+      return subs.map(s => ({ ...s, note_count: c[s.name] || 0 }));
+    }],
+    ['GET', /^\/api\/announcements$/, async () => q(client().from('announcements').select('*').eq('is_active', true).order('created_at', { ascending: false }))],
+    ['GET', /^\/api\/overview$/, async () => {
+      const vis = x => x.eq('is_hidden', false);
+      const [notes, items, threads, reviews, videos, latest_notes, hot] = await Promise.all([
+        cnt('notes', vis), cnt('items', x => vis(x).neq('status', 'SOLD')), cnt('threads', vis), cnt('reviews', vis), cnt('videos', vis),
+        q(client().from('notes').select('*').eq('is_hidden', false).order('created_at', { ascending: false }).limit(4)),
+        q(client().from('threads').select('*, thread_replies(count)').eq('is_hidden', false).order('created_at', { ascending: false }).limit(5)),
+      ]);
+      return { notes, items, threads, reviews, videos, latest_notes, latest_items: [], hot_threads: hot.map(replyCount) };
+    }],
+    // NoteShare
+    ['GET', /^\/api\/notes$/, async (_, qy) => {
+      let x = client().from('notes').select('*');
+      if (qy.q) { const s = clean(qy.q); x = x.or(`title.ilike.%${s}%,file_name.ilike.%${s}%,description.ilike.%${s}%`); }
+      if (qy.subject) x = x.eq('subject_name', qy.subject);
+      return q(x.order(qy.sort === 'popular' ? 'downloads' : 'created_at', { ascending: false }));
+    }],
+    ['POST', /^\/api\/notes$/, async (b) => {
+      const f = await upload(b.file_data, b.file_name);
+      const n = await q(client().from('notes').insert({ title: b.title, description: b.description || '', subject_name: b.subject_name, note_type: b.note_type, file_name: b.file_name, file_size: +b.file_size || 0, file_data: f.url, file_path: f.path, uploader_id: uid() }).select().single());
+      await notify(`📄 ${me.display_name} อัปโหลดเอกสารใหม่ "${n.title}" (${n.subject_name})`, null, 'note', 'notes'); return n;
+    }],
+    ['GET', /^\/api\/notes\/(\d+)\/download$/, async (_, __, m) => q(client().rpc('bump_download', { p_note: +m[1] }))],
+    ['DELETE', /^\/api\/notes\/(\d+)$/, async (_, __, m) => deleteOwned('note', +m[1])],
+    // ShareSpace
+    ['GET', /^\/api\/items$/, async (_, qy) => {
+      let x = client().from('items').select('*');
+      if (qy.q) { const s = clean(qy.q); x = x.or(`name.ilike.%${s}%,description.ilike.%${s}%`); }
+      if (qy.type) x = x.eq('sharing_type', qy.type);
+      if (qy.status) x = x.eq('status', qy.status);
+      if (qy.category) x = x.eq('category', qy.category);
+      return contactsFor(await q(x.order('created_at', { ascending: false })));
+    }],
+    ['POST', /^\/api\/items$/, async (b) => {
+      if (b.sharing_type === 'FOR_SALE' && !(+b.price > 0)) throw err(400, 'กรุณาระบุราคาสำหรับสินค้าที่ขาย');
+      const img = await upload(b.image_data, 'item.jpg');
+      const i = await q(client().from('items').insert({ name: b.name, description: b.description || '', category: b.category, item_condition: b.item_condition, sharing_type: b.sharing_type, price: b.sharing_type === 'FREE' ? null : +b.price, image_data: img.url, image_path: img.path, owner_id: uid() }).select().single());
+      if (String(b.contact || '').trim()) await q(client().from('item_contacts').insert({ item_id: i.item_id, contact: String(b.contact).trim().slice(0, 150) }));
+      await notify(`📦 ${me.display_name} ลงประกาศ "${i.name}" (${i.sharing_type === 'FREE' ? 'แจกฟรี' : 'ขาย ' + fmtNum(i.price) + ' บาท'})`, null, 'item', 'items'); return i;
+    }],
+    ['PATCH', /^\/api\/items\/(\d+)\/status$/, async (b, _, m) => q(client().rpc('item_action', { p_item: +m[1], p_action: b.action }))],
+    ['DELETE', /^\/api\/items\/(\d+)$/, async (_, __, m) => deleteOwned('item', +m[1])],
+    // ThreadSpace
+    ['GET', /^\/api\/threads$/, async (_, qy) => {
+      let x = client().from('threads').select('*, thread_replies(count)');
+      if (qy.q) { const s = clean(qy.q); x = x.or(`title.ilike.%${s}%,body.ilike.%${s}%`); }
+      if (qy.tag) x = x.eq('tag', qy.tag);
+      return (await q(x.order('is_pinned', { ascending: false }).order('created_at', { ascending: false }))).map(replyCount);
+    }],
+    ['GET', /^\/api\/threads\/(\d+)$/, async (_, __, m) => {
+      const t = await q(client().from('threads').select('*, thread_replies(*)').eq('thread_id', +m[1]).maybeSingle());
+      if (!t) throw err(404, 'ไม่พบกระทู้');
+      const replies = (t.thread_replies || []).sort((a, b) => String(a.created_at).localeCompare(String(b.created_at)));
+      return { ...t, thread_replies: undefined, replies, reply_count: replies.length };
+    }],
+    ['POST', /^\/api\/threads$/, async (b) => {
+      const t = await q(client().from('threads').insert({ title: b.title, tag: b.tag, body: b.body || '', author_id: uid() }).select().single());
+      await notify(`💬 กระทู้ใหม่: "${t.title}" โดย ${me.display_name}`, null, 'thread', 'threads'); return { ...t, reply_count: 0 };
+    }],
+    ['POST', /^\/api\/threads\/(\d+)\/replies$/, async (b, _, m) => {
+      const t = await q(client().from('threads').select('thread_id,title,author_id,is_locked').eq('thread_id', +m[1]).maybeSingle());
+      if (!t) throw err(404, 'ไม่พบกระทู้');
+      if (t.is_locked && !isAdm()) throw err(423, 'กระทู้นี้ถูกล็อก ไม่สามารถตอบได้');
+      if (!String(b.reply_text || '').trim() && !b.attachment_url) throw err(400, 'กรุณาพิมพ์ข้อความหรือแนบไฟล์');
+      const f = await upload(b.attachment_url, b.attachment_name);
+      const r = await q(client().from('thread_replies').insert({ thread_id: t.thread_id, reply_text: String(b.reply_text || '').trim(), attachment_url: f.url, attachment_path: f.path, attachment_name: b.attachment_name || '', reply_by_id: uid() }).select().single());
+      if (t.author_id !== uid()) await notify(`💬 ${me.display_name} ตอบกระทู้ "${t.title}" ของคุณ`, t.author_id, 'reply', 'thread:' + t.thread_id);
+      return r;
+    }],
+    ['DELETE', /^\/api\/threads\/(\d+)$/, async (_, __, m) => {
+      const atts = await q(client().from('thread_replies').select('attachment_path').eq('thread_id', +m[1]));
+      const r = await deleteOwned('thread', +m[1]);
+      for (const a of atts || []) await removeFile(a.attachment_path);
+      return r;
+    }],
+    ['DELETE', /^\/api\/replies\/(\d+)$/, async (_, __, m) => deleteOwned('reply', +m[1])],
+    // EduReview
+    ['GET', /^\/api\/reviews$/, async (_, qy) => {
+      let x = client().from('reviews').select('*');
+      if (qy.q) { const s = clean(qy.q); x = x.or(`media_name.ilike.%${s}%,content.ilike.%${s}%`); }
+      const col = { helpful: 'helpful', rating: 'rating' }[qy.sort] || 'created_at';
+      const [rows, votes] = await Promise.all([q(x.order(col, { ascending: false })), q(client().from('review_votes').select('review_id').eq('user_id', uid()))]);
+      const v = new Set((votes || []).map(r => r.review_id));
+      return rows.map(r => ({ ...r, voted: v.has(r.review_id) }));
+    }],
+    ['POST', /^\/api\/reviews$/, async (b) => {
+      const r = await q(client().from('reviews').insert({ media_name: b.media_name, media_type: b.media_type, rating: +b.rating, content: b.content, author_id: uid() }).select().single());
+      await notify(`⭐ ${me.display_name} รีวิว "${r.media_name}" (${r.rating}/5)`, null, 'review', 'reviews'); return r;
+    }],
+    ['POST', /^\/api\/reviews\/(\d+)\/helpful$/, async (_, __, m) => q(client().rpc('toggle_helpful', { p_review: +m[1] }))],
+    ['DELETE', /^\/api\/reviews\/(\d+)$/, async (_, __, m) => deleteOwned('review', +m[1])],
+    // EduUpload
+    ['GET', /^\/api\/videos$/, async (_, qy) => {
+      let x = client().from('videos').select('*');
+      if (qy.q) x = x.ilike('title', `%${clean(qy.q)}%`);
+      if (qy.subject) x = x.eq('subject_name', qy.subject);
+      return q(x.order('created_at', { ascending: false }));
+    }],
+    ['POST', /^\/api\/videos$/, async (b) => {
+      const f = await upload(b.url, 'video.mp4');
+      const v = await q(client().from('videos').insert({ title: b.title, url: f.url, file_path: f.path, subject_name: b.subject_name || '', duration: b.duration || '', uploader_id: uid() }).select().single());
+      await notify(`🎬 ${me.display_name} เพิ่มคลิป "${v.title}"`, null, 'video', 'videos'); return v;
+    }],
+    ['POST', /^\/api\/videos\/(\d+)\/view$/, async (_, __, m) => q(client().rpc('bump_view', { p_video: +m[1] }))],
+    ['DELETE', /^\/api\/videos\/(\d+)$/, async (_, __, m) => deleteOwned('video', +m[1])],
+    // notifications / reports
+    ['GET', /^\/api\/notifications$/, async () => {
+      const since = new Date(new Date(me.created_at).getTime() - 864e5).toISOString();
+      const rows = await q(client().from('notifications').select('*').gte('created_at', since).order('created_at', { ascending: false }).limit(50));
+      const seen = me.notif_seen_at || '';
+      return rows.map(n => ({ ...n, is_read: n.user_id ? n.is_read : (!!seen && new Date(n.created_at) <= new Date(seen)) }));
+    }],
+    ['POST', /^\/api\/notifications\/read-all$/, async () => {
+      const now = new Date().toISOString();
+      await Promise.all([q(client().from('notifications').update({ is_read: true }).eq('user_id', uid()).eq('is_read', false)), q(client().from('profiles').update({ notif_seen_at: now }).eq('id', uid()))]);
+      me.notif_seen_at = now; return { ok: true };
+    }],
+    ['POST', /^\/api\/reports$/, async (b) => { await q(client().from('reports').insert({ target_type: b.target_type, target_id: +b.target_id, reason: String(b.reason).slice(0, 500), reporter_id: uid() })); return { ok: true }; }],
+    // admin
+    ['GET', /^\/api\/admin\/stats$/, async () => q(client().rpc('admin_stats'))],
+    ['GET', /^\/api\/admin\/users$/, async (_, qy) => {
+      let x = client().from('profiles').select('*');
+      if (qy.q) { const s = clean(qy.q); x = x.or(`email.ilike.%${s}%,display_name.ilike.%${s}%`); }
+      return (await q(x.order('created_at', { ascending: false }))).map(userOut);
+    }],
+    ['PATCH', /^\/api\/admin\/users\/([\w-]+)$/, async (b, _, m) => {
+      if (m[1] === uid()) throw err(400, 'ไม่สามารถเปลี่ยนสิทธิ์หรือระงับบัญชีตัวเองได้');
+      const old = await q(client().from('profiles').select('*').eq('id', m[1]).single());
+      const patch = {}; if (b.role) patch.role = b.role; if (b.is_banned != null) patch.is_banned = b.is_banned;
+      const p = await q(client().from('profiles').update(patch).eq('id', m[1]).select().single());
+      if (b.role && b.role !== old.role) { await audit('เปลี่ยนสิทธิ์ผู้ใช้', `${p.email} → ${b.role}`); await notify(`สิทธิ์ของคุณถูกเปลี่ยนเป็น ${b.role === 'admin' ? 'ผู้ดูแลระบบ' : 'ผู้ใช้ทั่วไป'}`, p.id); }
+      if (b.is_banned != null && b.is_banned !== old.is_banned) await audit(b.is_banned ? 'ระงับบัญชี' : 'ปลดระงับบัญชี', p.email);
+      return userOut(p);
+    }],
+    ['GET', /^\/api\/admin\/content\/(\w+)$/, async (_, qy, m) => {
+      const c = TBL[m[1]]; if (!c) throw err(404, 'ประเภทไม่ถูกต้อง'); const [t, pk, tc, oc] = c;
+      let x = client().from(t).select('*'); if (qy.q) x = x.ilike(tc, `%${clean(qy.q)}%`);
+      return (await q(x.order('created_at', { ascending: false }).limit(300))).map(r => ({ id: r[pk], title: r[tc], owner: r[oc], is_hidden: !!r.is_hidden, is_pinned: r.is_pinned ?? null, is_locked: r.is_locked ?? null, created_at: r.created_at }));
+    }],
+    ['PATCH', /^\/api\/admin\/content\/(\w+)\/(\d+)$/, async (b, _, m) => {
+      const [t, pk, tc] = TBL[m[1]]; const patch = {};
+      ['is_hidden', 'is_pinned', 'is_locked'].forEach(k => { if (b[k] != null) patch[k] = b[k]; });
+      const r = await q(client().from(t).update(patch).eq(pk, +m[2]).select().single());
+      for (const [k, v] of Object.entries(patch)) await audit(`ตั้งค่า ${k}=${v}`, `${m[1]}#${m[2]} ${r[tc]}`.slice(0, 200));
+      return { ok: true };
+    }],
+    ['DELETE', /^\/api\/admin\/content\/(\w+)\/(\d+)$/, async (_, __, m) => {
+      const r = await deleteOwned(m[1], +m[2]);
+      await client().from('reports').update({ status: 'RESOLVED' }).eq('target_type', m[1]).eq('target_id', +m[2]);
+      return r;
+    }],
+    ['GET', /^\/api\/admin\/reports$/, async (_, qy) => {
+      let x = client().from('reports').select('*'); if (qy.status) x = x.eq('status', qy.status);
+      const reps = await q(x.order('created_at', { ascending: false }));
+      const titles = {};
+      for (const type of [...new Set(reps.map(r => r.target_type))]) {
+        const [t, pk, tc] = TBL[type];
+        const rows = await q(client().from(t).select(`${pk},${tc}`).in(pk, reps.filter(r => r.target_type === type).map(r => r.target_id)));
+        (rows || []).forEach(r => titles[type + r[pk]] = String(r[tc]).slice(0, 120));
+      }
+      return reps.map(r => ({ ...r, target_title: titles[r.target_type + r.target_id] || '(ถูกลบแล้ว)', target_exists: !!titles[r.target_type + r.target_id] }));
+    }],
+    ['PATCH', /^\/api\/admin\/reports\/(\d+)$/, async (b, _, m) => { await q(client().from('reports').update({ status: b.status }).eq('report_id', +m[1])); await audit(`รายงาน #${m[1]} → ${b.status}`); return { ok: true }; }],
+    ['GET', /^\/api\/admin\/announcements$/, async () => q(client().from('announcements').select('*').order('created_at', { ascending: false }))],
+    ['POST', /^\/api\/admin\/announcements$/, async (b) => {
+      await q(client().from('announcements').insert({ title: b.title, body: b.body || '', level: b.level, created_by: me.display_name }));
+      await notify(`📢 ประกาศ: ${b.title}`, null, 'announce', 'home'); await audit('สร้างประกาศ', b.title); return { ok: true };
+    }],
+    ['PATCH', /^\/api\/admin\/announcements\/(\d+)$/, async (_, __, m) => {
+      const a = await q(client().from('announcements').select('is_active').eq('ann_id', +m[1]).single());
+      await q(client().from('announcements').update({ is_active: !a.is_active }).eq('ann_id', +m[1])); return { ok: true };
+    }],
+    ['DELETE', /^\/api\/admin\/announcements\/(\d+)$/, async (_, __, m) => { await q(client().from('announcements').delete().eq('ann_id', +m[1])); await audit('ลบประกาศ', '#' + m[1]); return { ok: true }; }],
+    ['POST', /^\/api\/admin\/subjects$/, async (b) => { await q(client().from('subjects').insert({ code: String(b.code || '').trim(), name: String(b.name).trim() })); await audit('เพิ่มรายวิชา', b.name); return { ok: true }; }],
+    ['DELETE', /^\/api\/admin\/subjects\/(\d+)$/, async (_, __, m) => {
+      const s = await q(client().from('subjects').select('*').eq('subject_id', +m[1]).single());
+      if (await cnt('notes', x => x.eq('subject_name', s.name))) throw err(409, 'ยังมีเอกสารในรายวิชานี้ ลบเอกสารก่อน');
+      await q(client().from('subjects').delete().eq('subject_id', +m[1])); await audit('ลบรายวิชา', s.name); return { ok: true };
+    }],
+    ['GET', /^\/api\/admin\/audit$/, async () => q(client().from('audit_logs').select('*').order('created_at', { ascending: false }).limit(200))],
+  ];
+
+  async function handle(method, url, body) {
+    const [path, qstr] = url.split('?'); const qy = Object.fromEntries(new URLSearchParams(qstr || ''));
+    for (const [m, re, fn] of routes) {
+      const mt = path.match(re); if (m !== method || !mt) continue;
+      if (!/\/api\/(health|subjects|announcements)$/.test(path) && !me) { await loadMe(); if (!me) throw err(401, 'กรุณาเข้าสู่ระบบ'); }
+      if (me && me.is_banned) throw err(403, 'บัญชีนี้ถูกระงับการใช้งาน');
+      if (/\/api\/admin\//.test(path) && !isAdm()) throw err(403, 'สำหรับผู้ดูแลระบบเท่านั้น');
+      return fn(body || {}, qy, mt);
+    }
+    throw err(404, 'ไม่พบ endpoint');
+  }
+
+  // ---- auth
+  async function afterSignIn() {
+    const u = await loadMe();
+    if (!u) throw err(401, 'ไม่พบโปรไฟล์ผู้ใช้');
+    if (u.is_banned) { await client().auth.signOut(); me = null; throw err(403, 'บัญชีนี้ถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ'); }
+    try { await client().rpc('touch_login'); } catch { }
+    return { token: 'sb', user: u };
+  }
+  async function login(email, password) {
+    const { error } = await client().auth.signInWithPassword({ email, password });
+    if (error) throw err(401, thai(error.message));
+    return afterSignIn();
+  }
+  async function register({ email, password, display_name, year }) {
+    const { data, error } = await client().auth.signUp({ email, password, options: { data: { display_name, year }, emailRedirectTo: location.origin + location.pathname } });
+    if (error) throw err(400, thai(error.message));
+    if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) throw err(409, 'อีเมลนี้ลงทะเบียนแล้ว');
+    if (data.session) return afterSignIn();
+    return { needsConfirm: true, email };
+  }
+  async function resend(email) { const { error } = await client().auth.resend({ type: 'signup', email, options: { emailRedirectTo: location.origin + location.pathname } }); if (error) throw err(400, thai(error.message)); }
+  async function forgot(email) { const { error } = await client().auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname }); if (error) throw err(400, thai(error.message)); }
+  async function setPassword(password) { const { error } = await client().auth.updateUser({ password }); if (error) throw err(400, thai(error.message)); }
+  async function logout() { me = null; try { await client().auth.signOut(); } catch { } }
+  function onAuth(cb) { client().auth.onAuthStateChange((event) => cb(event)); }
+  return { handle, login, register, resend, forgot, setPassword, logout, loadMe, afterSignIn, onAuth, enabled: () => !!(SB_CFG.url && SB_CFG.key && window.supabase) };
+})();
+
+/* =========================================================
+   API layer + state
+   ========================================================= */
+const state = {
+  mode: 'demo', token: store.getItem('us_token') || '', user: null,
+  view: 'home', params: {}, loading: false, data: {}, subjects: [], anns: [], notifs: [],
+  f: { notes: { q: '', subject: '', sort: 'new' }, items: { q: '', type: '', status: '', category: '' }, threads: { q: '', tag: '' }, reviews: { q: '', sort: 'new' }, videos: { q: '', subject: '' } },
+  admin: { tab: 'overview', ctype: 'note', q: '', rstatus: 'OPEN' },
+  panel: false,
+};
+async function api(method, path, body) {
+  if (state.mode === 'demo') return Mock.handle(method, path, body, state.token);
+  if (state.mode === 'live') return SB.handle(method, path, body);
+  const res = await fetch(CONFIG.API_BASE + path, {
+    method, headers: { 'Content-Type': 'application/json', ...(state.token ? { Authorization: 'Bearer ' + state.token } : {}) },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  let data = null; try { data = await res.json(); } catch { }
+  if (!res.ok) {
+    let msg = data?.detail; if (Array.isArray(msg)) msg = msg.map(d => d.msg).join(', ');
+    const e = new Error(msg || 'เกิดข้อผิดพลาด (' + res.status + ')'); e.status = res.status; throw e;
+  }
+  return data;
+}
+const qs = o => { const p = new URLSearchParams(Object.entries(o).filter(([, v]) => v !== '' && v != null)).toString(); return p ? '?' + p : ''; };
+async function detectMode() {
+  if (SB.enabled()) return 'live';
+  if (!CONFIG.API_BASE) return 'demo';
+  try { const c = new AbortController(); setTimeout(() => c.abort(), 2500); const r = await fetch(CONFIG.API_BASE + '/api/health', { signal: c.signal }); if (r.ok) return 'live'; } catch { }
+  return 'demo';
+}
+async function safe(fn, okMsg) {
+  try { const r = await fn(); if (okMsg) toast(okMsg); return r; }
+  catch (e) { if (e.status === 401) { logout(true); } toast(e.message || 'เกิดข้อผิดพลาด', true); throw e; }
+}
+const isAdmin = () => state.user?.role === 'admin';
+const mine = id => state.user && state.user.user_id === id;
+const canManage = id => isAdmin() || mine(id);
+
+/* ---------- navigation ---------- */
+const NAV = [
+  { id: 'home', label: 'หน้าแรก', sub: 'ภาพรวม', icon: 'home' },
+  { id: 'notes', label: 'คลังความรู้', sub: 'NoteShare', icon: 'note' },
+  { id: 'items', label: 'ส่งต่อสิ่งของ', sub: 'ShareSpace', icon: 'box' },
+  { id: 'threads', label: 'พูดคุยแลกเปลี่ยน', sub: 'ThreadSpace', icon: 'chat' },
+  { id: 'reviews', label: 'รีวิวสื่อการเรียน', sub: 'EduReview', icon: 'star' },
+  { id: 'videos', label: 'คลิปการเรียน', sub: 'EduUpload', icon: 'video' },
+];
+function go(view, params = {}) {
+  const h = '#' + view + (params.id ? '-' + params.id : '');
+  if (location.hash !== h) location.hash = h; else route();
+}
+async function route() {
+  const [view = 'home', id] = location.hash.replace(/^#\/?/, '').split(/[-/]/);
+  state.view = (view === 'thread' && id) ? 'thread' : ([...NAV.map(n => n.id), 'admin', 'profile'].includes(view) ? view : 'home');
+  if (state.view === 'admin' && !isAdmin()) state.view = 'home';
+  state.params = id ? { id: +id } : {};
+  state.panel = false;
+  await loadView(); render(); window.scrollTo({ top: 0 });
+}
+async function loadView() {
+  if (!state.user) return;
+  const v = state.view, f = state.f[v];
+  if (v === 'admin' || v === 'thread') state.data[v] = null; // shape changes per tab / per thread
+  state.loading = true; render();
+  try {
+    const jobs = { home: async () => { const [ov, items] = await Promise.all([api('GET', '/api/overview'), api('GET', '/api/items')]); return { ...ov, items }; }, notes: () => api('GET', '/api/notes' + qs(f)), items: () => api('GET', '/api/items' + qs(f)),
+      threads: () => api('GET', '/api/threads' + qs(f)), thread: () => api('GET', '/api/threads/' + state.params.id), reviews: () => api('GET', '/api/reviews' + qs(f)),
+      videos: () => api('GET', '/api/videos' + qs(f)), admin: () => loadAdmin(), profile: () => Promise.resolve(null) };
+    const [d] = await Promise.all([jobs[v](), refreshMeta()]);
+    state.data[v] = d;
+  } catch (e) { if (e.status === 401) return logout(true); toast(e.message, true); if (v === 'thread') return go('threads'); }
+  finally { state.loading = false; }
+}
+async function refreshMeta() {
+  const [s, a, n] = await Promise.all([api('GET', '/api/subjects'), api('GET', '/api/announcements'), api('GET', '/api/notifications')]);
+  state.subjects = s; state.anns = a; state.notifs = n;
+}
+async function reload() { await loadView(); render(); }
+let searchTimer;
+function setFilter(view, key, val) { state.f[view][key] = val; clearTimeout(searchTimer); searchTimer = setTimeout(reload, key === 'q' ? 300 : 0); }
+function globalSearch(val) {
+  const target = ['notes', 'items', 'threads', 'reviews', 'videos'].includes(state.view) ? state.view : 'notes';
+  state.f[target].q = val; clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => { if (state.view !== target) go(target); else reload(); }, 350);
+}
+
+/* ---------- auth ---------- */
+function setSession(r) { state.token = r.token; state.user = r.user; store.setItem('us_token', r.token); }
+function logout(expired) { if (state.mode === 'live') SB.logout(); state.token = ''; state.user = null; store.removeItem('us_token'); if (expired) toast('เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่', true); render(); }
+let authTab = 'login', pendingEmail = '';
+async function resendConfirm() {
+  try { await SB.resend(pendingEmail); toast('ส่งอีเมลยืนยันอีกครั้งแล้ว ตรวจกล่องจดหมาย (และ Junk) ของ ' + pendingEmail); } catch (e) { toast(e.message, true); }
+}
+function openForgot() {
+  openModal('ลืมรหัสผ่าน', `<p class="muted" style="margin-top:12px">ใส่อีเมลที่ใช้สมัคร เราจะส่งลิงก์ตั้งรหัสผ่านใหม่ไปให้</p><label class="f">อีเมล</label><input class="input" name="email" type="email" required placeholder="yourname@pim.ac.th">`,
+    { onSubmit: async f => { await SB.forgot(f.email.value.trim().toLowerCase()); toast('ส่งลิงก์ตั้งรหัสผ่านใหม่แล้ว ตรวจอีเมลของคุณ'); } });
+}
+function openNewPassword() {
+  openModal('ตั้งรหัสผ่านใหม่', `<label class="f">รหัสผ่านใหม่</label><input class="input" name="pw" type="password" required minlength="6" placeholder="อย่างน้อย 6 ตัวอักษร">`,
+    { onSubmit: async f => { await SB.setPassword(f.pw.value); toast('เปลี่ยนรหัสผ่านแล้ว'); } });
+}
+async function doLogin(ev) {
+  ev.preventDefault(); const f = ev.target, er = $('#auth-err'); er.textContent = '';
+  const email = f.email.value.trim().toLowerCase();
+  if (authTab === 'register' && !email.endsWith(CONFIG.DOMAIN)) { er.textContent = `กรุณาใช้อีเมลสถาบัน (${CONFIG.DOMAIN}) เท่านั้น`; return; }
+  const btn = f.querySelector('button[type=submit]'); btn.disabled = true;
+  try {
+    let r;
+    if (state.mode === 'live') {
+      r = authTab === 'login' ? await SB.login(email, f.password.value)
+        : await SB.register({ email, password: f.password.value, display_name: f.display_name.value.trim(), year: +f.year.value });
+      if (r.needsConfirm) { pendingEmail = email; authTab = 'confirm'; render(); return; }
+    } else {
+      r = authTab === 'login' ? await api('POST', '/api/auth/login', { email, password: f.password.value })
+        : await api('POST', '/api/auth/register', { email, password: f.password.value, display_name: f.display_name.value, year: +f.year.value });
+    }
+    setSession(r); toast('ยินดีต้อนรับ ' + r.user.display_name); route();
+  } catch (e) { er.textContent = e.message; if (/ยืนยันอีเมล/.test(e.message)) { pendingEmail = email; er.innerHTML += ` <a href="javascript:resendConfirm()">ส่งอีเมลยืนยันอีกครั้ง</a>`; } } finally { btn.disabled = false; }
+}
+async function demoLogin(asAdmin) {
+  try {
+    const r = state.mode === 'live' ? await SB.login('demo@unishare.test', 'demo1234')
+      : asAdmin ? await api('POST', '/api/auth/login', { email: 'admin@pim.ac.th', password: 'admin1234' }) : await api('POST', '/api/auth/demo');
+    setSession(r); toast('เข้าสู่ระบบด้วยบัญชีทดลองแล้ว'); route();
+  } catch (e) { $('#auth-err').textContent = e.message; }
+}
+
+/* =========================================================
+   Rendering
+   ========================================================= */
+function render() {
+  const ae = document.activeElement, keep = ae && ae.tagName === 'INPUT' && ae.placeholder ? { ph: ae.placeholder, pos: ae.selectionStart } : null;
+  _render();
+  if (keep) { const el = [...document.querySelectorAll('#root input')].find(i => i.placeholder === keep.ph); if (el) { el.focus(); try { el.setSelectionRange(keep.pos, keep.pos); } catch { } } }
+}
+function _render() {
+  const root = $('#root');
+  if (!state.user) { root.innerHTML = authView(); return; }
+  const active = state.view === 'thread' ? 'threads' : state.view;
+  const unread = state.notifs.filter(n => !n.is_read).length;
+  const navBtn = n => `<button class="nav ${active === n.id ? 'on' : ''}" onclick="go('${n.id}')">${ic(n.icon)}<span>${n.label}<span class="sub">${n.sub}</span></span></button>`;
+  const searchVal = (state.f[active] || {}).q || '';
+  root.innerHTML = `
+  <div class="app">
+    <aside class="side">
+      <div class="brand">${logoMark()}<div><b>Uni<span style="color:var(--green)">Share</span></b><small>PIM · ตลาดส่งต่อของรุ่นพี่</small></div></div>
+      ${NAV.map(navBtn).join('')}
+      ${isAdmin() ? `<div class="nav-label">ผู้ดูแลระบบ</div><button class="nav ${active === 'admin' ? 'on' : ''}" onclick="go('admin')">${ic('shield')}<span>แผงควบคุมแอดมิน<span class="sub">Admin Console</span></span></button>` : ''}
+      <div class="side-foot">${ic('book')} สาขา${esc(CONFIG.DEPARTMENT)}<br><span class="muted">${state.mode === 'live' ? 'เชื่อมต่อเซิร์ฟเวอร์แล้ว' : 'โหมดสาธิต (ข้อมูลในเบราว์เซอร์)'}</span></div>
+    </aside>
+    <div class="main">
+      ${state.mode === 'demo' ? `<div class="demo-bar">${ic('cloud')}<span>โหมดสาธิต — ยังไม่ได้เชื่อมฐานข้อมูล ข้อมูลเก็บในเบราว์เซอร์นี้</span><span class="spacer"></span><button class="btn btn-ghost btn-sm" onclick="openSettings()">ตั้งค่า API</button></div>` : ''}
+      <header class="top">
+        
+        <label class="search">${ic('search')}<input id="gsearch" placeholder="ค้นหาเอกสาร สิ่งของ กระทู้..." value="${esc(searchVal)}" oninput="globalSearch(this.value)"></label>
+        <div class="top-actions">
+          
+          <button class="icon-btn" title="การแจ้งเตือน" onclick="togglePanel(event)">${ic('bell')}${unread ? `<span class="dot">${unread > 9 ? '9+' : unread}</span>` : ''}</button>
+          <div class="me" onclick="go('profile')">${avatar(state.user.display_name, 32)}<div class="nm"><b style="font-size:13.5px">${esc(state.user.display_name)}</b><small>${isAdmin() ? 'ผู้ดูแลระบบ' : 'ปี ' + state.user.year}</small></div></div>
+        </div>
+      </header>
+      <main class="content">${state.loading && !state.data[state.view] ? '<div class="empty">กำลังโหลด...</div>' : viewHtml()}</main>
+    </div>
+  </div>
+  <nav class="bottom-nav">${[...NAV.slice(0, 5), ...(isAdmin() ? [{ id: 'admin', label: 'แอดมิน', icon: 'shield' }] : [])].map(n => `<button class="${active === n.id ? 'on' : ''}" onclick="go('${n.id}')">${ic(n.icon)}${n.label.replace('พูดคุยแลกเปลี่ยน', 'กระทู้').replace('รีวิวสื่อการเรียน', 'รีวิว').replace('ส่งต่อสิ่งของ', 'สิ่งของ').replace('คลังความรู้', 'เอกสาร')}</button>`).join('')}</nav>
+  ${state.panel ? notifPanel() : ''}`;
+}
+function viewHtml() {
+  const d = state.data[state.view];
+  return ({ home: homeView, notes: notesView, items: itemsView, threads: threadsView, thread: threadView, reviews: reviewsView, videos: videosView, admin: adminView, profile: profileView }[state.view] || homeView)(d);
+}
+function pageHead(title, desc, actions = '') { return `<div class="page-head"><div><h1>${title}</h1><p>${desc}</p></div><div class="actions">${actions}</div></div>`; }
+function emptyBox(icon, text) { return `<div class="card empty">${ic(icon)}<div>${text}</div></div>`; }
+
+/* ---------- auth view ---------- */
+function confirmView() {
+  return `<div class="auth-form" style="min-height:100vh"><div class="box" style="text-align:center">
+    <div style="width:64px;height:64px;border-radius:20px;background:var(--green-soft);color:var(--green);display:grid;place-items:center;margin:0 auto 16px">${ic('bell')}</div>
+    <h2>ตรวจอีเมลของคุณ</h2>
+    <p style="color:var(--ink-2);margin:10px 0 18px">เราส่งลิงก์ยืนยันไปที่ <b>${esc(pendingEmail)}</b> แล้ว<br>กดลิงก์ในอีเมลเพื่อเปิดใช้บัญชี แล้วกลับมาเข้าสู่ระบบ<br><span class="muted">ถ้าไม่เจอ ลองดูในโฟลเดอร์ Junk / Spam</span></p>
+    <button class="btn btn-primary" style="width:100%" onclick="authTab='login';render()">ไปหน้าเข้าสู่ระบบ</button>
+    <button class="btn btn-ghost" style="width:100%;margin-top:10px" onclick="resendConfirm()">ส่งอีเมลยืนยันอีกครั้ง</button>
+  </div></div>`;
+}
+function authView() {
+  if (authTab === 'confirm') return confirmView();
+  const reg = authTab === 'register';
+  return `<div class="auth">
+    <div class="auth-art"><div class="hero-blob"></div>
+      <div class="row" style="gap:12px">${logoMark()}<b style="font-family:var(--display);font-size:20px">UniShare</b></div>
+      <div><h1>แบ่งปันความรู้ ส่งต่อสิ่งของ ในคอมมิวนิตี้ IT ของ PIM</h1>
+        <p>รวมชีทสรุป ข้อสอบเก่า หนังสือมือสอง และกระทู้ถาม-ตอบ ระหว่างรุ่นพี่รุ่นน้อง สาขาเทคโนโลยีสารสนเทศ ไว้ในที่เดียว</p>
+        <div class="feat"><div>${ic('note')}ชีทสรุปแยกรายวิชา</div><div>${ic('box')}แจกฟรี หรือขายมือสอง</div><div>${ic('clip')}ตอบกระทู้พร้อมแนบไฟล์</div><div>${ic('shield')}มีแอดมินดูแลเนื้อหา</div></div></div>
+      <small style="opacity:.7">คณะวิศวกรรมศาสตร์และเทคโนโลยี · สถาบันการจัดการปัญญาภิวัฒน์</small>
+    </div>
+    <div class="auth-form"><div class="box">
+      <h2>${reg ? 'สร้างบัญชีใหม่' : 'เข้าสู่ระบบ'}</h2><p class="muted">${reg ? 'ลงทะเบียนด้วยอีเมลสถาบัน' : 'ใช้อีเมล @pim.ac.th ของคุณ'}</p>
+      <div class="seg" style="margin:18px 0 4px"><button class="${!reg ? 'on' : ''}" onclick="authTab='login';render()">เข้าสู่ระบบ</button><button class="${reg ? 'on' : ''}" onclick="authTab='register';render()">ลงทะเบียน</button></div>
+      <form onsubmit="doLogin(event)">
+        ${reg ? `<label class="f">ชื่อที่แสดง</label><input class="input" name="display_name" required maxlength="100" placeholder="เช่น สมชาย ใจดี">` : ''}
+        <label class="f">${reg ? 'อีเมลสถาบัน' : 'อีเมล'}</label><input class="input" name="email" type="email" required placeholder="yourname@pim.ac.th">
+        <label class="f">รหัสผ่าน</label><input class="input" name="password" type="password" required minlength="${reg ? 6 : 1}" placeholder="${reg ? 'อย่างน้อย 6 ตัวอักษร' : '••••••••'}">
+        ${reg ? `<div class="grid g2" style="gap:10px"><div><label class="f">สาขาวิชา</label><input class="input" value="${CONFIG.DEPARTMENT}" disabled></div>
+          <div><label class="f">ชั้นปี</label><select class="select" name="year">${[1, 2, 3, 4].map(y => `<option value="${y}">ปี ${y}</option>`).join('')}</select></div></div>` : ''}
+        ${!reg && state.mode === 'live' ? `<div style="text-align:right;margin-top:6px"><a href="javascript:openForgot()" style="font-size:13px">ลืมรหัสผ่าน?</a></div>` : ''}
+        ${reg && state.mode === 'live' ? `<p class="muted" style="margin-top:10px">หลังสมัคร ระบบจะส่งลิงก์ยืนยันไปที่อีเมล @pim.ac.th ของคุณ</p>` : ''}
+        <div class="err" id="auth-err"></div>
+        <button class="btn btn-primary" type="submit" style="width:100%;padding:12px">${reg ? 'สร้างบัญชี' : 'เข้าสู่ระบบ'}</button>
+      </form>
+      <div class="divider">หรือทดลองใช้งาน</div>
+      <div class="grid ${state.mode === 'demo' ? 'g2' : ''}" style="gap:10px"><button class="btn btn-ghost" onclick="demoLogin(false)">${ic('user')} บัญชีนักศึกษาทดลอง</button>${state.mode === 'demo' ? `<button class="btn btn-ghost" onclick="demoLogin(true)">${ic('shield')} บัญชีแอดมิน</button>` : ''}</div>
+      <p class="muted" style="margin-top:16px;text-align:center">${state.mode === 'live' ? '🟢 เชื่อมต่อฐานข้อมูลแล้ว · บัญชีทดลองใช้ร่วมกันทุกคน' : '🟡 โหมดสาธิต · <a href="javascript:openSettings()">ตั้งค่า API</a>'}</p>
+    </div></div></div>`;
+}
+
+/* ---------- home ---------- */
+function pcard(i) {
+  const free = i.sharing_type === 'FREE';
+  return `<div class="pcard" onclick="openItem(${i.item_id})"><div class="im">${i.image_data ? `<img src="${esc(i.image_data)}" alt="">` : ''}
+    <span class="tag pill ${free ? 'pill-free' : 'pill-sale'}">${free ? 'แจกฟรี' : 'ขาย'}</span></div>
+    <div class="b"><span class="pr ${free ? 'free' : ''}">${free ? 'ฟรี' : '฿' + fmtNum(i.price)}</span><span class="nm">${esc(i.name)}</span><span class="who">${esc(i.owner_name)} · ${ago(i.created_at)}</span></div></div>`;
+}
+function openItem(id) {
+  const i = [...(state.data.home?.items || []), ...(state.data.items || [])].find(x => x.item_id === id); if (!i) return go('items');
+  openModal(esc(i.name), `<div style="padding-top:14px">${itemCard(i)}</div>`);
+}
+function shopBy(key, val) { state.f.items = { q: '', type: '', status: 'AVAILABLE', category: '', [key]: val }; go('items'); }
+function heroSearch(e) { if (e.key && e.key !== 'Enter') return; const v = $('#hero-q').value.trim(); state.f.items = { q: v, type: '', status: '', category: '' }; go('items'); }
+function homeView(d) {
+  if (!d) return '';
+  const avail = d.items.filter(i => i.status === 'AVAILABLE');
+  const free = avail.filter(i => i.sharing_type === 'FREE'), sale = avail.filter(i => i.sharing_type === 'FOR_SALE').sort((a, b) => a.price - b.price);
+  const count = c => avail.filter(i => i.category === c).length;
+  const ann = state.anns.slice(0, 1).map(a => `<div class="ann ${a.level}" style="margin-bottom:18px">${ic('megaphone')}<div><b>${esc(a.title)}</b><div style="font-size:13.5px;color:var(--ink-2)">${esc(a.body)}</div></div></div>`).join('');
+  const cats = [
+    ['หนังสือเรียน', 'book', 'var(--tint-sky)', '#00A4F1', () => `shopBy('category','หนังสือเรียน')`, count('หนังสือเรียน') + ' ชิ้น'],
+    ['อุปกรณ์ไอที', 'gear', 'var(--tint-mint)', '#00A859', () => `shopBy('category','อุปกรณ์ไอที')`, count('อุปกรณ์ไอที') + ' ชิ้น'],
+    ['อุปกรณ์การเรียน', 'tag', 'var(--tint-sun)', '#D4A106', () => `shopBy('category','อุปกรณ์การเรียน')`, count('อุปกรณ์การเรียน') + ' ชิ้น'],
+    ['ของแจกฟรี', 'box', 'var(--tint-rose)', '#F43F5E', () => `shopBy('type','FREE')`, free.length + ' ชิ้น'],
+    ['ชีทสรุป / ข้อสอบ', 'note', 'var(--tint-grape)', '#7C3AED', () => `go('notes')`, d.notes + ' ไฟล์'],
+    ['คลิปติว', 'video', 'var(--tint-sky)', '#0EA5E9', () => `go('videos')`, d.videos + ' คลิป'],
+  ];
+  const row = (title, sub, list, more) => `<div class="section-title"><div><h3>${title}</h3><div class="muted">${sub}</div></div><span class="spacer"></span><a href="javascript:${more}">ดูทั้งหมด →</a></div>
+    ${list.length ? `<div class="mkt-row">${list.slice(0, 10).map(pcard).join('')}</div>` : emptyBox('box', 'ยังไม่มีของในหมวดนี้')}`;
+  return `${ann}
+  <section class="mkt-hero">
+    <div style="position:relative;z-index:1">
+      <span class="eyebrow">${ic('users')} ตลาดส่งต่อของนักศึกษา IT · PIM</span>
+      <h1>ของรุ่นพี่ที่ไม่ใช้แล้ว<br><em>ส่งต่อ</em>ถึงมือรุ่นน้อง</h1>
+      <p>หนังสือเรียน อุปกรณ์ไอที ชีทสรุป แจกฟรีหรือขายราคานักศึกษา คุยกันตรงๆ ในคอมมิวนิตี้ของเรา</p>
+      <label class="mkt-search">${ic('search')}<input id="hero-q" placeholder="ค้นหา เช่น หนังสือ Database, เมาส์, Arduino" onkeydown="heroSearch(event)"><button class="btn btn-primary" onclick="heroSearch({})">ค้นหา</button></label>
+      <div class="quick"><button onclick="shopBy('type','FREE')">🎁 ของฟรี</button><button onclick="shopBy('category','หนังสือเรียน')">หนังสือเรียน</button><button onclick="shopBy('category','อุปกรณ์ไอที')">อุปกรณ์ไอที</button><button onclick="openItemForm()">+ ลงของส่งต่อ</button></div>
+    </div>
+    <div class="collage">${avail.slice(0, 3).map(pcard).join('')}</div>
+  </section>
+  <div class="cats">${cats.map(([n, i, bg, col, fn, sub]) => `<button class="cat" style="background:${bg}" onclick="${fn()}"><span class="ci" style="color:${col}">${ic(i)}</span><span><b>${n}</b><br><small>${sub}</small></span></button>`).join('')}</div>
+  <div class="promos">
+    <div class="promo" style="background:linear-gradient(120deg,var(--tint-mint),#D6F5E3)" onclick="shopBy('type','FREE')"><div><span class="tag pill-free">โซนแจกฟรี</span><h3 style="margin-top:8px">รับของฟรีจากรุ่นพี่</h3><p>กดขอรับได้เลย รุ่นพี่จะได้แจ้งเตือนทันที</p><span class="btn btn-primary btn-sm">ดูของฟรี →</span></div><span class="big" style="color:var(--green)">FREE</span></div>
+    <div class="promo" style="background:linear-gradient(120deg,var(--tint-sun),#FFF0B8)" onclick="shopBy('type','FOR_SALE')"><div><span class="tag pill-sale">ราคานักศึกษา</span><h3 style="margin-top:8px">มือสองสภาพดี ราคาเป็นมิตร</h3><p>${sale.length ? 'เริ่มต้นเพียง ฿' + fmtNum(sale[0].price) : 'ลงขายของชิ้นแรกได้เลย'}</p><span class="btn btn-amber btn-sm">ดูของขาย</span></div><span class="big" style="color:#D4A106">฿</span></div>
+  </div>
+  ${row('🎁 แจกฟรีล่าสุด', 'ของที่รุ่นพี่อยากส่งต่อให้ฟรี', free, "shopBy('type','FREE')")}
+  ${row('🏷️ ราคาถูกจากรุ่นพี่', 'เรียงจากราคาต่ำสุด', sale, "shopBy('type','FOR_SALE')")}
+  <div class="trust">
+    <div>${ic('shield')}<span><b>@pim.ac.th</b>เฉพาะนักศึกษาสถาบัน</span></div>
+    <div>${ic('box')}<span><b>${fmtNum(avail.length)}</b>ของที่ส่งต่อได้ตอนนี้</span></div>
+    <div>${ic('note')}<span><b>${fmtNum(d.notes)}</b>ชีทและข้อสอบเก่า</span></div>
+    <div>${ic('chat')}<span><b>${fmtNum(d.threads)}</b>กระทู้ถาม-ตอบ</span></div>
+  </div>
+  <div class="grid g2" style="margin-top:6px">
+    <div><div class="section-title"><h3>ชีทสรุปมาใหม่</h3><span class="spacer"></span><a href="#notes">ดูทั้งหมด →</a></div>
+      <div class="card">${d.latest_notes.map(n => `<div class="row" style="padding:12px 14px;border-bottom:1px solid var(--line);cursor:pointer" onclick="go('notes')">${fileIcon(n.file_name)}<div style="flex:1;min-width:0"><b style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(n.title)}</b><span class="muted">${esc(n.subject_name)} · ${fmtNum(n.downloads)} ดาวน์โหลด</span></div></div>`).join('') || '<div class="empty">ยังไม่มีเอกสาร</div>'}</div></div>
+    <div><div class="section-title"><h3>กระทู้ล่าสุด</h3><span class="spacer"></span><a href="#threads">ดูทั้งหมด →</a></div>
+      <div class="card">${d.hot_threads.map(t => `<div class="row" style="padding:12px 14px;border-bottom:1px solid var(--line);cursor:pointer" onclick="go('thread',{id:${t.thread_id}})">${avatar(t.author, 34)}<div style="flex:1;min-width:0"><b style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.is_pinned ? '📌 ' : ''}${esc(t.title)}</b><span class="muted">${esc(t.tag)} · ${t.reply_count} ความคิดเห็น</span></div></div>`).join('') || '<div class="empty">ยังไม่มีกระทู้</div>'}</div></div>
+  </div>`;
+}
+
+/* ---------- NoteShare ---------- */
+function noteCard(n) {
+  return `<div class="card note">
+    <div class="row" style="align-items:flex-start;gap:12px">${fileIcon(n.file_name)}<div style="min-width:0;flex:1"><h4>${esc(n.title)}</h4><div class="muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(n.file_name)} ${n.file_size ? '· ' + fmtSize(n.file_size) : ''}</div></div></div>
+    <div class="row" style="flex-wrap:wrap;gap:6px"><span class="tag t-green">${esc(n.subject_name)}</span><span class="tag t-gray">${esc(n.note_type)}</span>${n.is_hidden ? '<span class="tag t-red">ถูกซ่อน</span>' : ''}</div>
+    ${n.description ? `<div style="font-size:13.5px;color:var(--ink-2)">${esc(n.description)}</div>` : ''}
+    <div class="meta"><span>${esc(n.uploader)}</span><span>${ago(n.created_at)}</span><span>${ic('download')} ${fmtNum(n.downloads)}</span></div>
+    <div class="foot"><button class="btn btn-primary btn-sm" style="flex:1" onclick="downloadNote(${n.note_id})">${ic('download')} ดาวน์โหลด</button>
+      ${canManage(n.uploader_id) ? `<button class="btn btn-danger btn-sm" title="ลบ" onclick="del('note',${n.note_id})">${ic('trash')}</button>` : `<button class="btn btn-ghost btn-sm" title="รายงาน" onclick="openReport('note',${n.note_id})">${ic('flag')}</button>`}</div>
+  </div>`;
+}
+function notesView(list = []) {
+  const f = state.f.notes; const total = state.subjects.reduce((s, x) => s + x.note_count, 0);
+  return pageHead('คลังความรู้', 'ชีทสรุป ข้อสอบเก่า และไฟล์ประกอบการเรียน แยกตามรายวิชาสาขาไอที', `<button class="btn btn-primary" onclick="openNoteForm()">${ic('plus')} อัปโหลดเอกสาร</button>`) + `
+    <div class="chips"><button class="chip ${!f.subject ? 'on' : ''}" onclick="setFilter('notes','subject','')">ทุกวิชา <span class="n">${total}</span></button>
+      ${state.subjects.map(s => `<button class="chip ${f.subject === s.name ? 'on' : ''}" onclick="setFilter('notes','subject','${esc(s.name)}')">${esc(s.name)} <span class="n">${s.note_count}</span></button>`).join('')}</div>
+    <div class="toolbar"><label class="search" style="max-width:340px">${ic('search')}<input placeholder="ค้นหาชื่อไฟล์หรือหัวข้อ" value="${esc(f.q)}" oninput="setFilter('notes','q',this.value)"></label>
+      <select class="select" onchange="setFilter('notes','sort',this.value)"><option value="new" ${f.sort === 'new' ? 'selected' : ''}>ล่าสุด</option><option value="popular" ${f.sort === 'popular' ? 'selected' : ''}>ดาวน์โหลดมากสุด</option></select>
+      <span class="muted">${list.length} รายการ</span></div>
+    ${list.length ? `<div class="grid g3">${list.map(noteCard).join('')}</div>` : emptyBox('note', 'ไม่พบเอกสารตามเงื่อนไข')}`;
+}
+
+/* ---------- ShareSpace ---------- */
+const STATUS = { AVAILABLE: ['ว่าง', 't-green'], RESERVED: ['จองแล้ว', 't-amber'], SOLD: ['ส่งต่อแล้ว', 't-gray'] };
+function itemCard(i) {
+  const [sl, sc] = STATUS[i.status]; const free = i.sharing_type === 'FREE'; const own = canManage(i.owner_id);
+  let actions = '';
+  if (i.status === 'AVAILABLE' && !mine(i.owner_id)) actions += `<button class="btn btn-primary btn-sm" style="flex:1" onclick="itemAction(${i.item_id},'reserve')">${free ? 'ขอรับสิ่งของ (ฟรี)' : 'สนใจซื้อ'}</button>`;
+  if (i.status === 'RESERVED' && (own || i.reserved_by_id === state.user.user_id)) actions += `<button class="btn btn-ghost btn-sm" style="flex:1" onclick="itemAction(${i.item_id},'cancel')">ยกเลิกการจอง</button>`;
+  if (own && i.status !== 'SOLD') actions += `<button class="btn btn-ghost btn-sm" onclick="itemAction(${i.item_id},'sold')">${ic('check')} ${free ? 'ส่งต่อแล้ว' : 'ขายแล้ว'}</button>`;
+  if (own && i.status === 'SOLD') actions += `<button class="btn btn-ghost btn-sm" style="flex:1" onclick="itemAction(${i.item_id},'available')">เปิดใหม่</button>`;
+  actions += own ? `<button class="btn btn-danger btn-sm" onclick="del('item',${i.item_id})">${ic('trash')}</button>` : `<button class="btn btn-ghost btn-sm" title="รายงาน" onclick="openReport('item',${i.item_id})">${ic('flag')}</button>`;
+  return `<div class="card item ${i.status === 'SOLD' ? 'sold' : ''}">
+    <div class="ph">${i.image_data ? `<img src="${esc(i.image_data)}" alt="">` : ic('image')}
+      <span class="tag badge ${free ? 't-teal' : 't-amber'}">${free ? 'แจกฟรี' : 'ขาย'}</span><span class="tag st ${sc}">${sl}</span></div>
+    <div class="body"><div class="price ${free ? 'free' : ''}">${free ? 'ฟรี' : '฿' + fmtNum(i.price)}</div>
+      <b style="font-size:15px">${esc(i.name)}</b>
+      <div class="row" style="flex-wrap:wrap;gap:6px"><span class="tag t-gray">${esc(i.category)}</span><span class="tag t-gray">${esc(i.item_condition)}</span>${i.is_hidden ? '<span class="tag t-red">ถูกซ่อน</span>' : ''}</div>
+      ${i.description ? `<div style="font-size:13.5px;color:var(--ink-2)">${esc(i.description)}</div>` : ''}
+      <div class="muted">${esc(i.owner_name)} · ${ago(i.created_at)}${i.contact && (i.reserved_by_id === state.user.user_id || own) ? `<br>ติดต่อ: <b style="color:var(--ink)">${esc(i.contact)}</b>` : ''}${i.reserved_by ? `<br>จองโดย ${esc(i.reserved_by)}` : ''}</div>
+      <div class="row" style="margin-top:auto;padding-top:8px;gap:6px">${actions}</div></div></div>`;
+}
+function itemsView(list = []) {
+  const f = state.f.items;
+  const chip = (k, v, l) => `<button class="chip ${f[k] === v ? 'on' : ''}" onclick="setFilter('items','${k}','${v}')">${l}</button>`;
+  return pageHead('ส่งต่อสิ่งของ', 'แจกฟรีให้รุ่นน้อง หรือขายมือสองในราคานักศึกษา', `<button class="btn btn-primary" onclick="openItemForm()">${ic('plus')} ลงประกาศ</button>`) + `
+    <div class="chips">${chip('type', '', 'ทั้งหมด')}${chip('type', 'FREE', '🎁 แจกฟรี')}${chip('type', 'FOR_SALE', '🏷️ ซื้อ-ขาย')}<span style="width:12px"></span>${chip('status', '', 'ทุกสถานะ')}${chip('status', 'AVAILABLE', 'ว่าง')}${chip('status', 'RESERVED', 'จองแล้ว')}${chip('status', 'SOLD', 'ส่งต่อแล้ว')}</div>
+    <div class="toolbar"><label class="search" style="max-width:340px">${ic('search')}<input placeholder="ค้นหาสิ่งของ" value="${esc(f.q)}" oninput="setFilter('items','q',this.value)"></label>
+      <select class="select" onchange="setFilter('items','category',this.value)"><option value="">ทุกหมวดหมู่</option>${ITEM_CATS.map(c => `<option ${f.category === c ? 'selected' : ''}>${c}</option>`).join('')}</select><span class="muted">${list.length} รายการ</span></div>
+    ${list.length ? `<div class="grid g3">${list.map(itemCard).join('')}</div>` : emptyBox('box', 'ยังไม่มีประกาศตามเงื่อนไข')}`;
+}
+
+/* ---------- ThreadSpace ---------- */
+function threadsView(list = []) {
+  const f = state.f.threads;
+  return pageHead('พูดคุยแลกเปลี่ยน', 'ถาม-ตอบ แชร์เทคนิคการเรียน และปรึกษาปัญหา', `<button class="btn btn-primary" onclick="openThreadForm()">${ic('plus')} ตั้งกระทู้</button>`) + `
+    <div class="chips"><button class="chip ${!f.tag ? 'on' : ''}" onclick="setFilter('threads','tag','')">ทั้งหมด</button>${THREAD_TAGS.map(t => `<button class="chip ${f.tag === t ? 'on' : ''}" onclick="setFilter('threads','tag','${t}')">${t}</button>`).join('')}</div>
+    <div class="toolbar"><label class="search" style="max-width:340px">${ic('search')}<input placeholder="ค้นหากระทู้" value="${esc(f.q)}" oninput="setFilter('threads','q',this.value)"></label></div>
+    ${list.length ? `<div class="grid">${list.map(t => `<div class="card thread" onclick="go('thread',{id:${t.thread_id}})">
+      ${avatar(t.author)}<div style="flex:1;min-width:0"><div class="row" style="gap:6px;flex-wrap:wrap;margin-bottom:4px">${t.is_pinned ? `<span class="tag t-amber">${ic('pin')}ปักหมุด</span>` : ''}${t.is_locked ? `<span class="tag t-gray">${ic('lock')}ล็อก</span>` : ''}<span class="tag t-blue">${esc(t.tag)}</span>${t.is_hidden ? '<span class="tag t-red">ถูกซ่อน</span>' : ''}</div>
+      <h4>${esc(t.title)}</h4>${t.body ? `<div class="ex">${esc(t.body)}</div>` : ''}<div class="muted" style="margin-top:6px">${esc(t.author)} · ${ago(t.created_at)}</div></div>
+      <div class="replies-count"><b>${t.reply_count}</b><small>ตอบ</small></div></div>`).join('')}</div>` : emptyBox('chat', 'ยังไม่มีกระทู้')}`;
+}
+let pendingAttach = null;
+function attachmentHtml(url, name) {
+  if (!url) return '';
+  const isImg = url.startsWith('data:image');
+  return `<div class="attach">${isImg ? `<img src="${esc(url)}" alt="">` : `${fileIcon(name)}<div style="flex:1;min-width:0"><b style="font-size:13.5px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(name || 'ไฟล์แนบ')}</b><span class="muted">ไฟล์แนบ</span></div>`}
+    <button class="btn btn-ghost btn-sm" onclick='downloadDataUrl(${JSON.stringify(url)}, ${JSON.stringify(name || "attachment")})'>${ic('download')}</button></div>`;
+}
+function threadView(t) {
+  if (!t) return '';
+  const locked = t.is_locked && !isAdmin();
+  return `<button class="btn btn-ghost btn-sm" onclick="go('threads')" style="margin-bottom:16px">${ic('back')} กลับไปหน้ากระทู้</button>
+    <div class="card" style="padding:22px">
+      <div class="row" style="gap:6px;flex-wrap:wrap;margin-bottom:10px"><span class="tag t-blue">${esc(t.tag)}</span>${t.is_pinned ? `<span class="tag t-amber">${ic('pin')}ปักหมุด</span>` : ''}${t.is_locked ? `<span class="tag t-gray">${ic('lock')}ล็อกแล้ว</span>` : ''}</div>
+      <h2 style="font-size:23px">${esc(t.title)}</h2>
+      <div class="row" style="margin:12px 0">${avatar(t.author, 32)}<div><b style="font-size:14px">${esc(t.author)}</b><div class="muted">${ago(t.created_at)}</div></div><span class="spacer"></span>
+        ${canManage(t.author_id) ? `<button class="btn btn-danger btn-sm" onclick="del('thread',${t.thread_id})">${ic('trash')} ลบกระทู้</button>` : `<button class="btn btn-ghost btn-sm" onclick="openReport('thread',${t.thread_id})">${ic('flag')} รายงาน</button>`}</div>
+      ${t.body ? `<div style="white-space:pre-wrap">${esc(t.body)}</div>` : ''}
+      <h3 style="font-size:16px;margin:24px 0 4px">${t.replies.length} ความคิดเห็น</h3>
+      ${t.replies.map(r => `<div class="reply">${avatar(r.reply_by, 34)}<div class="bubble"><div class="row"><b style="font-size:14px">${esc(r.reply_by)}</b><span class="muted">${ago(r.created_at)}</span><span class="spacer"></span>
+        ${canManage(r.reply_by_id) ? `<button class="btn btn-ghost btn-sm" title="ลบ" onclick="del('reply',${r.reply_id})">${ic('trash')}</button>` : `<button class="btn btn-ghost btn-sm" title="รายงาน" onclick="openReport('reply',${r.reply_id})">${ic('flag')}</button>`}</div>
+        ${r.reply_text ? `<div style="white-space:pre-wrap;margin-top:2px">${esc(r.reply_text)}</div>` : ''}${attachmentHtml(r.attachment_url, r.attachment_name)}</div></div>`).join('')}
+      ${locked ? `<div class="ann warning" style="margin-top:16px">${ic('lock')} กระทู้นี้ถูกล็อกโดยผู้ดูแลระบบ</div>` : `
+      <div class="card composer" style="box-shadow:none">
+        <textarea class="textarea" id="reply-text" placeholder="พิมพ์ความคิดเห็นของคุณ..."></textarea>
+        <div id="reply-pending"></div>
+        <div class="row" style="margin-top:10px"><label class="btn btn-ghost btn-sm">${ic('clip')} แนบไฟล์<input type="file" hidden onchange="pickAttach(this)" accept="image/*,.pdf,.doc,.docx,.ppt,.pptx,.zip,.txt,.py,.java,.c,.cpp,.js,.sql"></label>
+          <span class="muted">รูปภาพหรือเอกสาร ไม่เกิน 10MB</span><span class="spacer"></span><button class="btn btn-primary" id="reply-btn" onclick="sendReply(${t.thread_id})">ส่งความคิดเห็น</button></div></div>`}
+    </div>`;
+}
+
+/* ---------- EduReview ---------- */
+function reviewsView(list = []) {
+  const f = state.f.reviews;
+  const avg = list.length ? (list.reduce((s, r) => s + r.rating, 0) / list.length).toFixed(1) : '-';
+  return pageHead('รีวิวสื่อการเรียน', 'ให้คะแนนหนังสือ คอร์ส และสื่อการเรียนที่ใช้แล้วเวิร์ก', `<button class="btn btn-primary" onclick="openReviewForm()">${ic('plus')} เขียนรีวิว</button>`) + `
+    <div class="toolbar"><label class="search" style="max-width:340px">${ic('search')}<input placeholder="ค้นหาชื่อสื่อ" value="${esc(f.q)}" oninput="setFilter('reviews','q',this.value)"></label>
+      <select class="select" onchange="setFilter('reviews','sort',this.value)">${[['new', 'ล่าสุด'], ['helpful', 'เป็นประโยชน์มากสุด'], ['rating', 'คะแนนสูงสุด']].map(([v, l]) => `<option value="${v}" ${f.sort === v ? 'selected' : ''}>${l}</option>`).join('')}</select>
+      <span class="muted">${list.length} รีวิว · เฉลี่ย ${avg} ★</span></div>
+    ${list.length ? `<div class="grid g2">${list.map(r => `<div class="card review">
+      <div class="row" style="align-items:flex-start"><div style="flex:1;min-width:0"><span class="tag t-gray">${esc(r.media_type)}</span>${r.is_hidden ? ' <span class="tag t-red">ถูกซ่อน</span>' : ''}<h4 style="font-size:16.5px;margin-top:6px">${esc(r.media_name)}</h4></div>${stars(r.rating)}</div>
+      <p style="margin:10px 0;color:var(--ink-2);white-space:pre-wrap">${esc(r.content)}</p>
+      <div class="row">${avatar(r.author, 28)}<span class="muted">${esc(r.author)} · ${ago(r.created_at)}</span><span class="spacer"></span>
+        <button class="btn btn-sm ${r.voted ? 'btn-primary' : 'btn-ghost'}" onclick="helpful(${r.review_id})">${ic('thumb')} เป็นประโยชน์ ${r.helpful}</button>
+        ${canManage(r.author_id) ? `<button class="btn btn-danger btn-sm" onclick="del('review',${r.review_id})">${ic('trash')}</button>` : `<button class="btn btn-ghost btn-sm" onclick="openReport('review',${r.review_id})">${ic('flag')}</button>`}</div></div>`).join('')}</div>` : emptyBox('star', 'ยังไม่มีรีวิว')}`;
+}
+
+/* ---------- EduUpload ---------- */
+function videosView(list = []) {
+  const f = state.f.videos;
+  return pageHead('คลิปการเรียน', 'รวมคลิปติวและบทเรียนย้อนหลังจาก YouTube, Google Drive หรือไฟล์วิดีโอ', `<button class="btn btn-primary" onclick="openVideoForm()">${ic('plus')} เพิ่มคลิป</button>`) + `
+    <div class="toolbar"><label class="search" style="max-width:340px">${ic('search')}<input placeholder="ค้นหาคลิป" value="${esc(f.q)}" oninput="setFilter('videos','q',this.value)"></label>
+      <select class="select" onchange="setFilter('videos','subject',this.value)"><option value="">ทุกวิชา</option>${state.subjects.map(s => `<option ${f.subject === s.name ? 'selected' : ''}>${esc(s.name)}</option>`).join('')}</select><span class="muted">${list.length} คลิป</span></div>
+    ${list.length ? `<div class="grid g3">${list.map(v => { const vi = videoInfo(v.url); return `<div class="card video">
+      <div class="thumb" style="${vi.thumb ? `background-image:url('${esc(vi.thumb)}')` : 'background:var(--hero)'}" onclick="playVideo(${v.video_id})">
+        <span class="tag src t-gray">${vi.kind}</span><span class="play">${ic('play')}</span>${v.duration ? `<span class="dur">${esc(v.duration)}</span>` : ''}</div>
+      <div class="body"><b style="display:block">${esc(v.title)}</b>${v.subject_name ? `<span class="tag t-green" style="margin-top:6px">${esc(v.subject_name)}</span>` : ''}
+        <div class="row" style="margin-top:8px"><span class="muted">${esc(v.uploader)} · ${fmtNum(v.views)} ครั้ง · ${ago(v.created_at)}</span><span class="spacer"></span>
+        ${canManage(v.uploader_id) ? `<button class="btn btn-danger btn-sm" onclick="event.stopPropagation();del('video',${v.video_id})">${ic('trash')}</button>` : `<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openReport('video',${v.video_id})">${ic('flag')}</button>`}</div></div></div>`; }).join('')}</div>` : emptyBox('video', 'ยังไม่มีคลิป')}`;
+}
+
+/* ---------- profile ---------- */
+function profileView() {
+  const u = state.user;
+  return pageHead('โปรไฟล์ของฉัน', 'ข้อมูลบัญชีและการตั้งค่า') + `
+    <div class="grid g2"><div class="card" style="padding:22px">
+      <div class="row" style="gap:14px">${avatar(u.display_name, 64)}<div><h3 style="font-size:20px">${esc(u.display_name)}</h3><div class="muted">${esc(u.email)}</div>
+        <div class="row" style="gap:6px;margin-top:6px"><span class="tag t-green">${esc(u.department)}</span><span class="tag t-gray">ปี ${u.year}</span>${isAdmin() ? '<span class="tag t-amber">ผู้ดูแลระบบ</span>' : ''}</div></div></div>
+      <form onsubmit="saveProfile(event)" style="margin-top:14px"><label class="f">ชื่อที่แสดง</label><input class="input" name="display_name" value="${esc(u.display_name)}" maxlength="100" required>
+        <label class="f">ชั้นปี</label><select class="select" name="year">${[1, 2, 3, 4, 5, 6, 7, 8].map(y => `<option value="${y}" ${u.year === y ? 'selected' : ''}>ปี ${y}</option>`).join('')}</select>
+        <button class="btn btn-primary" style="margin-top:16px">บันทึก</button></form></div>
+      <div class="card" style="padding:22px"><h3 style="font-size:17px;margin-bottom:12px">การตั้งค่า</h3>
+                <div class="row" style="padding:10px 0;border-bottom:1px solid var(--line)"><span>ฐานข้อมูล</span><span class="spacer"></span><span class="tag ${state.mode === 'live' ? 't-green' : 't-amber'}">${state.mode === 'live' ? 'เชื่อมต่อแล้ว' : 'โหมดสาธิต'}</span>${state.mode === 'live' ? '' : `<button class="btn btn-ghost btn-sm" onclick="openSettings()">${ic('gear')}</button>`}</div>
+        ${state.mode === 'live' ? `<div class="row" style="padding:10px 0;border-bottom:1px solid var(--line)"><span>รหัสผ่าน</span><span class="spacer"></span><button class="btn btn-ghost btn-sm" onclick="openNewPassword()">เปลี่ยนรหัสผ่าน</button></div>` : ''}
+        ${state.mode === 'demo' ? `<div class="row" style="padding:10px 0;border-bottom:1px solid var(--line)"><span>รีเซ็ตข้อมูลสาธิต</span><span class="spacer"></span><button class="btn btn-danger btn-sm" onclick="resetDemo()">รีเซ็ต</button></div>` : ''}
+        <button class="btn btn-ghost" style="margin-top:18px;width:100%" onclick="logout()">${ic('logout')} ออกจากระบบ</button></div></div>`;
+}
+
+/* ---------- notifications ---------- */
+function notifPanel() {
+  return `<div class="card panel" onclick="event.stopPropagation()"><div class="row" style="padding:14px 16px;border-bottom:1px solid var(--line)"><b>การแจ้งเตือน</b><span class="spacer"></span><button class="btn btn-ghost btn-sm" onclick="readAll()">อ่านทั้งหมด</button></div>
+    ${state.notifs.length ? state.notifs.map(n => `<div class="notif ${n.is_read ? '' : 'unread'}" onclick="openNotif('${esc(n.link)}')">${n.is_read ? '<span style="width:8px"></span>' : '<span class="nd"></span>'}<div style="flex:1"><div>${esc(n.message)}</div><div class="muted">${ago(n.created_at)}</div></div></div>`).join('') : '<div class="empty">ยังไม่มีการแจ้งเตือน</div>'}</div>`;
+}
+function togglePanel(e) { e.stopPropagation(); state.panel = !state.panel; render(); }
+document.addEventListener('click', () => { if (state.panel) { state.panel = false; render(); } });
+function openNotif(link) {
+  state.panel = false;
+  if (link.startsWith('thread:')) go('thread', { id: +link.split(':')[1] });
+  else if (link === 'admin' && isAdmin()) { state.admin.tab = 'reports'; go('admin'); }
+  else go(link || 'home');
+}
+async function readAll() { await safe(() => api('POST', '/api/notifications/read-all')); state.notifs = await api('GET', '/api/notifications'); render(); }
+
+/* =========================================================
+   Admin console
+   ========================================================= */
+const ADMIN_TABS = [['overview', 'ภาพรวม', 'chart'], ['users', 'ผู้ใช้', 'users'], ['content', 'จัดการเนื้อหา', 'list'], ['reports', 'รายงาน', 'flag'], ['announcements', 'ประกาศ', 'megaphone'], ['subjects', 'รายวิชา', 'book'], ['audit', 'บันทึกกิจกรรม', 'clock']];
+const CTYPES = [['note', 'เอกสาร'], ['item', 'สิ่งของ'], ['thread', 'กระทู้'], ['reply', 'ความคิดเห็น'], ['review', 'รีวิว'], ['video', 'คลิป']];
+async function loadAdmin() {
+  const a = state.admin, t = a.tab;
+  const stats = await api('GET', '/api/admin/stats');
+  const extra = {
+    overview: () => null, users: () => api('GET', '/api/admin/users' + qs({ q: a.q })), content: () => api('GET', `/api/admin/content/${a.ctype}` + qs({ q: a.q })),
+    reports: () => api('GET', '/api/admin/reports' + qs({ status: a.rstatus })), announcements: () => api('GET', '/api/admin/announcements'), subjects: () => null, audit: () => api('GET', '/api/admin/audit'),
+  }[t];
+  return { stats, rows: await extra() };
+}
+function adminTab(t) { state.admin.tab = t; state.admin.q = ''; reload(); }
+function adminView(d) {
+  if (!d) return '';
+  const a = state.admin, s = d.stats;
+  const tabs = `<div class="tabs">${ADMIN_TABS.map(([k, l, i]) => `<button class="${a.tab === k ? 'on' : ''}" onclick="adminTab('${k}')">${ic(i)}${l}${k === 'reports' && s.open_reports ? ` <span class="tag t-red">${s.open_reports}</span>` : ''}</button>`).join('')}</div>`;
+  const body = { overview: adminOverview, users: adminUsers, content: adminContent, reports: adminReports, announcements: adminAnns, subjects: adminSubjects, audit: adminAudit }[a.tab](d.rows, s);
+  return pageHead(`${ic('shield')} แผงควบคุมผู้ดูแลระบบ`, 'ดูแลผู้ใช้ เนื้อหา รายงาน และประกาศของแพลตฟอร์ม') + tabs + body;
+}
+function adminOverview(_, s) {
+  const st = (k, v, sub, icon) => `<div class="card stat"><div class="k">${ic(icon)}${k}</div><div class="v">${fmtNum(v)}</div><div class="s">${sub}</div></div>`;
+  const max = Math.max(1, ...s.activity.map(x => x.count)), maxS = Math.max(1, ...s.by_subject.map(x => x.count));
+  const day = d => new Date(d).toLocaleDateString('th-TH', { weekday: 'short' });
+  return `<div class="grid g4">${st('ผู้ใช้ทั้งหมด', s.users, `+${s.new_users_week} ใน 7 วัน · ระงับ ${s.banned}`, 'users')}${st('เอกสาร', s.notes, `ดาวน์โหลดรวม ${fmtNum(s.downloads)} ครั้ง`, 'note')}
+    ${st('สิ่งของ', s.items, `ฟรี ${s.items_free} · ขาย ${s.items_sale} · ส่งต่อแล้ว ${s.items_sold}`, 'box')}${st('รายงานรอตรวจ', s.open_reports, s.open_reports ? 'ต้องดำเนินการ' : 'ไม่มีค้าง', 'flag')}</div>
+    <div class="grid g2" style="margin-top:16px">
+      <div class="card" style="padding:18px"><b>กิจกรรม 7 วันล่าสุด</b><div class="muted">โพสต์ใหม่ทุกโมดูลรวมกัน</div>
+        <div class="bars">${s.activity.map(x => `<div class="b"><em>${x.count}</em><i style="height:${x.count / max * 100}%"></i><small>${day(x.date)}</small></div>`).join('')}</div></div>
+      <div class="card" style="padding:18px"><b>เอกสารตามรายวิชา</b><div class="muted">ช่วยดูว่าวิชาไหนยังขาดสื่อ</div>
+        ${s.by_subject.length ? s.by_subject.map(x => `<div class="hbar"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.subject)}</span><div class="track"><i style="width:${x.count / maxS * 100}%"></i></div><b>${x.count}</b></div>`).join('') : '<div class="empty">ยังไม่มีข้อมูล</div>'}</div></div>
+    <div class="grid g4" style="margin-top:16px">${st('กระทู้', s.threads, `${s.replies} ความคิดเห็น`, 'chat')}${st('รีวิว', s.reviews, 'EduReview', 'star')}${st('คลิป', s.videos, 'EduUpload', 'video')}${st('รายวิชา', state.subjects.length, 'ที่เปิดใช้งาน', 'book')}</div>`;
+}
+const adminSearch = ph => `<div class="toolbar"><label class="search" style="max-width:340px">${ic('search')}<input placeholder="${ph}" value="${esc(state.admin.q)}" oninput="state.admin.q=this.value;clearTimeout(searchTimer);searchTimer=setTimeout(reload,300)"></label></div>`;
+function adminUsers(rows) {
+  return adminSearch('ค้นหาชื่อหรืออีเมล') + `<div class="card table-wrap"><table><thead><tr><th>ผู้ใช้</th><th>ชั้นปี</th><th>สิทธิ์</th><th>สถานะ</th><th>เข้าใช้ล่าสุด</th><th></th></tr></thead><tbody>
+    ${rows.map(u => `<tr><td><div class="row">${avatar(u.display_name, 32)}<div><b>${esc(u.display_name)}</b><div class="muted">${esc(u.email)}</div></div></div></td><td>ปี ${u.year}</td>
+      <td>${u.role === 'admin' ? '<span class="tag t-amber">แอดมิน</span>' : '<span class="tag t-gray">ผู้ใช้</span>'}</td><td>${u.is_banned ? '<span class="tag t-red">ระงับ</span>' : '<span class="tag t-green">ปกติ</span>'}</td>
+      <td class="muted">${u.last_login ? ago(u.last_login) : '-'}</td>
+      <td style="text-align:right;white-space:nowrap">${mine(u.user_id) ? '<span class="muted">คุณ</span>' : `
+        <button class="btn btn-ghost btn-sm" onclick="adminUser('${u.user_id}',{role:'${u.role === 'admin' ? 'user' : 'admin'}'})">${u.role === 'admin' ? 'ถอดแอดมิน' : 'ตั้งเป็นแอดมิน'}</button>
+        <button class="btn btn-sm ${u.is_banned ? 'btn-ghost' : 'btn-danger'}" onclick="adminUser('${u.user_id}',{is_banned:${!u.is_banned}})">${u.is_banned ? 'ปลดระงับ' : 'ระงับ'}</button>`}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function adminContent(rows) {
+  const a = state.admin;
+  return `<div class="chips">${CTYPES.map(([k, l]) => `<button class="chip ${a.ctype === k ? 'on' : ''}" onclick="state.admin.ctype='${k}';state.admin.q='';reload()">${l}</button>`).join('')}</div>` + adminSearch('ค้นหาชื่อเรื่อง') +
+    `<div class="card table-wrap"><table><thead><tr><th>#</th><th>หัวข้อ</th><th>เจ้าของ</th><th>สถานะ</th><th>วันที่</th><th></th></tr></thead><tbody>
+    ${rows.length ? rows.map(r => `<tr><td class="muted">${r.id}</td><td style="max-width:360px"><div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r.title)}</div></td><td>${esc(r.owner)}</td>
+      <td>${r.is_hidden ? '<span class="tag t-red">ซ่อน</span>' : '<span class="tag t-green">แสดง</span>'} ${r.is_pinned ? '<span class="tag t-amber">ปักหมุด</span>' : ''} ${r.is_locked ? '<span class="tag t-gray">ล็อก</span>' : ''}</td><td class="muted">${ago(r.created_at)}</td>
+      <td style="text-align:right;white-space:nowrap">
+        ${a.ctype !== 'reply' ? `<button class="btn btn-ghost btn-sm" title="${r.is_hidden ? 'แสดง' : 'ซ่อน'}" onclick="adminFlag('${a.ctype}',${r.id},{is_hidden:${!r.is_hidden}})">${ic(r.is_hidden ? 'eye' : 'eyeoff')}</button>` : ''}
+        ${a.ctype === 'thread' ? `<button class="btn btn-ghost btn-sm" title="ปักหมุด" onclick="adminFlag('thread',${r.id},{is_pinned:${!r.is_pinned}})">${ic('pin')}</button><button class="btn btn-ghost btn-sm" title="ล็อก" onclick="adminFlag('thread',${r.id},{is_locked:${!r.is_locked}})">${ic(r.is_locked ? 'unlock' : 'lock')}</button>` : ''}
+        <button class="btn btn-danger btn-sm" onclick="adminDelete('${a.ctype}',${r.id})">${ic('trash')}</button></td></tr>`).join('') : '<tr><td colspan="6" class="empty">ไม่มีข้อมูล</td></tr>'}</tbody></table></div>`;
+}
+function adminReports(rows) {
+  const a = state.admin;
+  return `<div class="chips">${[['OPEN', 'รอตรวจ'], ['RESOLVED', 'ดำเนินการแล้ว'], ['DISMISSED', 'ยกเลิก'], ['', 'ทั้งหมด']].map(([k, l]) => `<button class="chip ${a.rstatus === k ? 'on' : ''}" onclick="state.admin.rstatus='${k}';reload()">${l}</button>`).join('')}</div>
+    ${rows.length ? `<div class="grid">${rows.map(r => `<div class="card" style="padding:16px"><div class="row" style="flex-wrap:wrap"><span class="tag t-blue">${(CTYPES.find(c => c[0] === r.target_type) || [])[1]} #${r.target_id}</span>
+      <span class="tag ${r.status === 'OPEN' ? 't-red' : r.status === 'RESOLVED' ? 't-green' : 't-gray'}">${{ OPEN: 'รอตรวจ', RESOLVED: 'ดำเนินการแล้ว', DISMISSED: 'ยกเลิก' }[r.status]}</span><span class="muted">${esc(r.reporter)} · ${ago(r.created_at)}</span></div>
+      <b style="display:block;margin-top:8px">${esc(r.target_title)}</b><div style="color:var(--ink-2);font-size:14px;margin-top:4px">เหตุผล: ${esc(r.reason)}</div>
+      ${r.status === 'OPEN' ? `<div class="row" style="margin-top:12px;flex-wrap:wrap">${r.target_exists ? `<button class="btn btn-ghost btn-sm" onclick="adminFlag('${r.target_type}',${r.target_id},{is_hidden:true},${r.report_id})">${ic('eyeoff')} ซ่อนเนื้อหา</button><button class="btn btn-danger btn-sm" onclick="adminDelete('${r.target_type}',${r.target_id})">${ic('trash')} ลบเนื้อหา</button>` : ''}
+        <span class="spacer"></span><button class="btn btn-ghost btn-sm" onclick="reportStatus(${r.report_id},'DISMISSED')">ยกเลิกรายงาน</button><button class="btn btn-primary btn-sm" onclick="reportStatus(${r.report_id},'RESOLVED')">${ic('check')} ดำเนินการแล้ว</button></div>` : ''}</div>`).join('')}</div>` : emptyBox('flag', 'ไม่มีรายงานในหมวดนี้')}`;
+}
+function adminAnns(rows) {
+  return `<div class="card" style="padding:18px;margin-bottom:16px"><b>สร้างประกาศใหม่</b><form onsubmit="createAnn(event)"><div class="grid g2" style="gap:10px">
+      <div><label class="f">หัวข้อ</label><input class="input" name="title" required maxlength="255"></div><div><label class="f">ระดับ</label><select class="select" name="level"><option value="info">ข้อมูล</option><option value="success">ข่าวดี</option><option value="warning">คำเตือน</option></select></div></div>
+      <label class="f">รายละเอียด</label><textarea class="textarea" name="body" style="min-height:70px"></textarea><button class="btn btn-primary" style="margin-top:12px">${ic('megaphone')} เผยแพร่ประกาศ</button></form></div>
+    ${rows.length ? `<div class="grid">${rows.map(a => `<div class="ann ${a.level}" style="${a.is_active ? '' : 'opacity:.55'}">${ic('megaphone')}<div style="flex:1"><b>${esc(a.title)}</b> ${a.is_active ? '<span class="tag t-green">แสดงอยู่</span>' : '<span class="tag t-gray">ปิด</span>'}<div style="font-size:13.5px;color:var(--ink-2)">${esc(a.body)}</div><div class="muted">${esc(a.created_by)} · ${ago(a.created_at)}</div></div>
+      <div class="row" style="align-items:flex-start"><button class="btn btn-ghost btn-sm" onclick="toggleAnn(${a.ann_id})">${a.is_active ? 'ปิด' : 'เปิด'}</button><button class="btn btn-danger btn-sm" onclick="deleteAnn(${a.ann_id})">${ic('trash')}</button></div></div>`).join('')}</div>` : emptyBox('megaphone', 'ยังไม่มีประกาศ')}`;
+}
+function adminSubjects() {
+  return `<div class="card" style="padding:18px;margin-bottom:16px"><b>เพิ่มรายวิชา</b><form onsubmit="addSubject(event)" class="row" style="margin-top:10px;flex-wrap:wrap">
+      <input class="input" name="code" placeholder="รหัสวิชา เช่น ITE-361" style="max-width:180px"><input class="input" name="name" placeholder="ชื่อวิชา" required style="flex:1;min-width:200px"><button class="btn btn-primary">${ic('plus')} เพิ่ม</button></form></div>
+    <div class="card table-wrap"><table><thead><tr><th>รหัส</th><th>ชื่อวิชา</th><th>เอกสาร</th><th></th></tr></thead><tbody>
+    ${state.subjects.map(s => `<tr><td class="muted">${esc(s.code)}</td><td><b>${esc(s.name)}</b></td><td>${s.note_count}</td><td style="text-align:right"><button class="btn btn-danger btn-sm" onclick="deleteSubject(${s.subject_id})">${ic('trash')}</button></td></tr>`).join('')}</tbody></table></div>`;
+}
+function adminAudit(rows) {
+  return `<div class="card table-wrap"><table><thead><tr><th>เวลา</th><th>ผู้ดำเนินการ</th><th>การกระทำ</th><th>รายละเอียด</th></tr></thead><tbody>
+    ${rows.length ? rows.map(l => `<tr><td class="muted" style="white-space:nowrap">${ago(l.created_at)}</td><td>${esc(l.actor)}</td><td><b>${esc(l.action)}</b></td><td style="color:var(--ink-2)">${esc(l.detail)}</td></tr>`).join('') : '<tr><td colspan="4" class="empty">ยังไม่มีบันทึก</td></tr>'}</tbody></table></div>`;
+}
+async function adminUser(id, body) { await safe(() => api('PATCH', '/api/admin/users/' + id, body), 'อัปเดตผู้ใช้แล้ว'); reload(); }
+async function adminFlag(type, id, body, reportId) { await safe(() => api('PATCH', `/api/admin/content/${type}/${id}`, body), 'อัปเดตแล้ว'); if (reportId) await api('PATCH', '/api/admin/reports/' + reportId, { status: 'RESOLVED' }); reload(); }
+function adminDelete(type, id) { confirmBox('ลบเนื้อหานี้ถาวร?', 'การลบไม่สามารถย้อนกลับได้ และจะถูกบันทึกใน Audit log', async () => { await safe(() => api('DELETE', `/api/admin/content/${type}/${id}`), 'ลบแล้ว'); reload(); }); }
+async function reportStatus(id, status) { await safe(() => api('PATCH', '/api/admin/reports/' + id, { status }), 'อัปเดตรายงานแล้ว'); reload(); }
+async function createAnn(e) { e.preventDefault(); const f = e.target; await safe(() => api('POST', '/api/admin/announcements', { title: f.title.value, body: f.body.value, level: f.level.value }), 'เผยแพร่ประกาศแล้ว'); reload(); }
+async function toggleAnn(id) { await safe(() => api('PATCH', '/api/admin/announcements/' + id)); reload(); }
+function deleteAnn(id) { confirmBox('ลบประกาศนี้?', '', async () => { await safe(() => api('DELETE', '/api/admin/announcements/' + id), 'ลบประกาศแล้ว'); reload(); }); }
+async function addSubject(e) { e.preventDefault(); const f = e.target; await safe(() => api('POST', '/api/admin/subjects', { code: f.code.value, name: f.name.value }), 'เพิ่มรายวิชาแล้ว'); reload(); }
+function deleteSubject(id) { confirmBox('ลบรายวิชานี้?', 'ลบได้เฉพาะวิชาที่ยังไม่มีเอกสาร', async () => { await safe(() => api('DELETE', '/api/admin/subjects/' + id), 'ลบรายวิชาแล้ว'); reload(); }); }
+
+/* =========================================================
+   Modals & forms
+   ========================================================= */
+function openModal(title, body, { wide = false, onSubmit } = {}) {
+  closeModal();
+  const o = document.createElement('div'); o.className = 'overlay'; o.id = 'modal';
+  o.innerHTML = `<form class="modal ${wide ? 'wide' : ''}" onclick="event.stopPropagation()"><div class="modal-head"><h3>${title}</h3><span class="spacer"></span><button type="button" class="icon-btn" onclick="closeModal()">${ic('x')}</button></div>
+    <div class="modal-body">${body}</div>${onSubmit ? `<div class="modal-foot"><div class="err" id="m-err" style="margin:0 auto 0 0;align-self:center"></div><button type="button" class="btn btn-ghost" onclick="closeModal()">ยกเลิก</button><button class="btn btn-primary" id="m-submit">บันทึก</button></div>` : ''}</form>`;
+  o.addEventListener('click', closeModal);
+  const form = o.querySelector('form');
+  form.addEventListener('submit', async e => {
+    e.preventDefault(); if (!onSubmit) return;
+    const btn = $('#m-submit'); btn.disabled = true; $('#m-err').textContent = '';
+    try { await onSubmit(form); closeModal(); } catch (er) { $('#m-err').textContent = er.message; } finally { btn.disabled = false; }
+  });
+  document.body.appendChild(o); setTimeout(() => o.querySelector('input,textarea,select')?.focus(), 50);
+  return form;
+}
+function closeModal() { $('#modal')?.remove(); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+function confirmBox(title, text, onYes) {
+  const f = openModal(title, `<p style="padding:14px 0;color:var(--ink-2)">${esc(text || 'ยืนยันการดำเนินการนี้หรือไม่?')}</p><div class="row" style="justify-content:flex-end"><button type="button" class="btn btn-ghost" onclick="closeModal()">ยกเลิก</button><button type="button" class="btn btn-danger" id="yes">ยืนยัน</button></div>`);
+  f.querySelector('#yes').onclick = async () => { closeModal(); try { await onYes(); } catch { } };
+}
+function fileDrop(name, accept, label) {
+  return `<label class="drop" id="drop-${name}">${ic('cloud')}<div id="drop-${name}-t">${label}</div><input type="file" name="${name}" accept="${accept}" hidden onchange="dropPicked(this)"></label>`;
+}
+async function dropPicked(inp) {
+  const f = inp.files[0]; if (!f) return;
+  try {
+    const url = await readFile(f); inp.dataset.url = url; inp.dataset.name = f.name; inp.dataset.size = f.size;
+    $('#drop-' + inp.name + '-t').innerHTML = (url.startsWith('data:image') ? `<img src="${url}">` : fileIcon(f.name)) + `<div><b>${esc(f.name)}</b> · ${fmtSize(f.size)}</div>`;
+  } catch (e) { inp.value = ''; toast(e.message, true); }
+}
+
+function openNoteForm() {
+  openModal('อัปโหลดเอกสาร', `
+    <label class="f">หัวข้อเอกสาร</label><input class="input" name="title" required maxlength="255" placeholder="เช่น สรุปบทที่ 3 Normalization">
+    <div class="grid g2" style="gap:10px"><div><label class="f">รายวิชา</label><select class="select" name="subject_name" required>${state.subjects.map(s => `<option ${state.f.notes.subject === s.name ? 'selected' : ''}>${esc(s.name)}</option>`).join('')}</select></div>
+      <div><label class="f">ประเภท</label><select class="select" name="note_type">${NOTE_TYPES.map(t => `<option>${t}</option>`).join('')}</select></div></div>
+    <div class="grid g2" style="gap:10px"><div><label class="f">สาขาวิชา</label><input class="input" value="${CONFIG.DEPARTMENT}" disabled></div><div><label class="f">ผู้อัปโหลด</label><input class="input" value="${esc(state.user.display_name)}" disabled></div></div>
+    <label class="f">คำอธิบาย (ไม่บังคับ)</label><textarea class="textarea" name="description" style="min-height:60px"></textarea>
+    <label class="f">ไฟล์ (PDF, DOCX, PPTX, ZIP)</label>${fileDrop('file', '.pdf,.doc,.docx,.ppt,.pptx,.zip,.txt', 'คลิกเพื่อเลือกไฟล์ · สูงสุด 10MB')}`,
+    { onSubmit: async f => {
+      const inp = f.file; if (!inp.dataset.url) throw new Error('กรุณาเลือกไฟล์');
+      await safe(() => api('POST', '/api/notes', { title: f.title.value, subject_name: f.subject_name.value, note_type: f.note_type.value, description: f.description.value, file_name: inp.dataset.name, file_size: +inp.dataset.size, file_data: inp.dataset.url }), 'อัปโหลดเอกสารแล้ว');
+      if (state.view === 'notes' || state.view === 'home') reload(); else go('notes');
+    } });
+}
+async function downloadNote(id) { const n = await safe(() => api('GET', `/api/notes/${id}/download`)); downloadDataUrl(n.file_data, n.file_name); toast('เริ่มดาวน์โหลด ' + n.file_name); reload(); }
+
+function openItemForm() {
+  const f = openModal('ลงประกาศส่งต่อสิ่งของ', `
+    <label class="f">รูปแบบการส่งต่อ</label><div class="seg" id="seg-type"><button type="button" class="on" data-v="FREE">🎁 แจกฟรี</button><button type="button" data-v="FOR_SALE">🏷️ ซื้อ-ขาย</button></div><input type="hidden" name="sharing_type" value="FREE">
+    <label class="f">ชื่อสิ่งของ</label><input class="input" name="name" required maxlength="255" placeholder="เช่น หนังสือ Java เบื้องต้น">
+    <div id="price-row" style="display:none"><label class="f">ราคา (บาท)</label><input class="input" name="price" type="number" min="1" step="1" placeholder="เช่น 250"></div>
+    <div class="grid g2" style="gap:10px"><div><label class="f">หมวดหมู่</label><select class="select" name="category">${ITEM_CATS.map(c => `<option>${c}</option>`).join('')}</select></div>
+      <div><label class="f">สภาพ</label><select class="select" name="item_condition">${ITEM_COND.map(c => `<option>${c}</option>`).join('')}</select></div></div>
+    <label class="f">รายละเอียด</label><textarea class="textarea" name="description" style="min-height:60px"></textarea>
+    <label class="f">ช่องทางติดต่อ (แสดงให้ผู้จองเห็นเท่านั้น)</label><input class="input" name="contact" placeholder="เช่น LINE: myid">
+    <label class="f">รูปภาพ</label>${fileDrop('image', 'image/*', 'คลิกเพื่อเลือกรูปภาพ')}`,
+    { onSubmit: async f => {
+      const t = f.sharing_type.value; if (t === 'FOR_SALE' && !(+f.price.value > 0)) throw new Error('กรุณาระบุราคา');
+      await safe(() => api('POST', '/api/items', { name: f.name.value, sharing_type: t, price: t === 'FOR_SALE' ? +f.price.value : null, category: f.category.value, item_condition: f.item_condition.value, description: f.description.value, contact: f.contact.value, image_data: f.image.dataset.url || '' }), 'ลงประกาศแล้ว');
+      if (state.view === 'items' || state.view === 'home') reload(); else go('items');
+    } });
+  f.querySelectorAll('#seg-type button').forEach(b => b.onclick = () => {
+    f.querySelectorAll('#seg-type button').forEach(x => x.classList.toggle('on', x === b));
+    f.sharing_type.value = b.dataset.v; $('#price-row').style.display = b.dataset.v === 'FOR_SALE' ? '' : 'none'; f.price.required = b.dataset.v === 'FOR_SALE';
+  });
+}
+async function itemAction(id, action) {
+  closeModal();
+  const msg = { reserve: 'ส่งคำขอแล้ว เจ้าของจะได้รับแจ้งเตือน', cancel: 'ยกเลิกการจองแล้ว', sold: 'อัปเดตสถานะแล้ว', available: 'เปิดประกาศอีกครั้งแล้ว' }[action];
+  await safe(() => api('PATCH', `/api/items/${id}/status`, { action }), msg); reload();
+}
+
+function openThreadForm() {
+  openModal('ตั้งกระทู้ใหม่', `<label class="f">หัวข้อ</label><input class="input" name="title" required maxlength="255">
+    <label class="f">หมวดหมู่</label><select class="select" name="tag">${THREAD_TAGS.map(t => `<option>${t}</option>`).join('')}</select>
+    <label class="f">รายละเอียด</label><textarea class="textarea" name="body" style="min-height:120px"></textarea>`,
+    { onSubmit: async f => { const t = await safe(() => api('POST', '/api/threads', { title: f.title.value, tag: f.tag.value, body: f.body.value }), 'ตั้งกระทู้แล้ว'); go('thread', { id: t.thread_id }); } });
+}
+async function pickAttach(inp) {
+  const f = inp.files[0]; if (!f) return;
+  try { pendingAttach = { url: await readFile(f), name: f.name, size: f.size };
+    $('#reply-pending').innerHTML = `<div class="pending">${ic('clip')}<b>${esc(f.name)}</b><span class="muted">${fmtSize(f.size)}</span><span class="spacer"></span><button type="button" class="btn btn-ghost btn-sm" onclick="pendingAttach=null;$('#reply-pending').innerHTML=''">${ic('x')}</button></div>`;
+  } catch (e) { toast(e.message, true); } inp.value = '';
+}
+async function sendReply(id) {
+  const text = $('#reply-text').value.trim(); if (!text && !pendingAttach) return toast('กรุณาพิมพ์ข้อความหรือแนบไฟล์', true);
+  $('#reply-btn').disabled = true;
+  try { await safe(() => api('POST', `/api/threads/${id}/replies`, { reply_text: text, attachment_url: pendingAttach?.url || '', attachment_name: pendingAttach?.name || '' }), 'ส่งความคิดเห็นแล้ว'); pendingAttach = null; reload(); }
+  catch { $('#reply-btn').disabled = false; }
+}
+
+function openReviewForm() {
+  const f = openModal('เขียนรีวิวสื่อการเรียน', `<label class="f">ชื่อสื่อการเรียน</label><input class="input" name="media_name" required maxlength="255" placeholder="เช่น หนังสือ Clean Code">
+    <label class="f">ประเภท</label><select class="select" name="media_type">${MEDIA_TYPES.map(t => `<option>${t}</option>`).join('')}</select>
+    <label class="f">คะแนน</label><div class="star-input" id="star-input">${[1, 2, 3, 4, 5].map(i => `<button type="button" data-v="${i}" class="${i <= 5 ? 'on' : ''}">${ic('star')}</button>`).join('')}</div><input type="hidden" name="rating" value="5">
+    <label class="f">รีวิว</label><textarea class="textarea" name="content" required placeholder="ข้อดี ข้อเสีย เหมาะกับใคร"></textarea>`,
+    { onSubmit: async f => { await safe(() => api('POST', '/api/reviews', { media_name: f.media_name.value, media_type: f.media_type.value, rating: +f.rating.value, content: f.content.value }), 'โพสต์รีวิวแล้ว'); state.view === 'reviews' ? reload() : go('reviews'); } });
+  const btns = f.querySelectorAll('#star-input button');
+  const paint = v => btns.forEach(b => b.classList.toggle('on', +b.dataset.v <= v));
+  btns.forEach(b => { b.onclick = () => { f.rating.value = b.dataset.v; paint(+b.dataset.v); }; b.onmouseenter = () => paint(+b.dataset.v); });
+  $('#star-input').onmouseleave = () => paint(+f.rating.value);
+}
+async function helpful(id) { await safe(() => api('POST', `/api/reviews/${id}/helpful`)); reload(); }
+
+function openVideoForm() {
+  const f = openModal('เพิ่มคลิปการเรียน', `<label class="f">ชื่อคลิป</label><input class="input" name="title" required maxlength="255">
+    <label class="f">แหล่งที่มา</label><div class="seg" id="seg-src"><button type="button" class="on" data-v="url">ลิงก์ YouTube / Drive</button><button type="button" data-v="file">อัปโหลดไฟล์</button></div>
+    <div id="src-url"><label class="f">URL</label><input class="input" name="url" placeholder="https://www.youtube.com/watch?v=..."></div>
+    <div id="src-file" style="display:none"><label class="f">ไฟล์วิดีโอ (ไม่เกิน 10MB)</label>${fileDrop('vfile', 'video/*', 'คลิกเพื่อเลือกไฟล์วิดีโอ')}</div>
+    <div class="grid g2" style="gap:10px"><div><label class="f">รายวิชา</label><select class="select" name="subject_name"><option value="">- ไม่ระบุ -</option>${state.subjects.map(s => `<option>${esc(s.name)}</option>`).join('')}</select></div>
+      <div><label class="f">ความยาว</label><input class="input" name="duration" placeholder="เช่น 15:30"></div></div>`,
+    { onSubmit: async f => {
+      const url = f.vfile.dataset.url && $('#src-file').style.display !== 'none' ? f.vfile.dataset.url : f.url.value.trim();
+      if (!url) throw new Error('กรุณาใส่ลิงก์หรือเลือกไฟล์');
+      await safe(() => api('POST', '/api/videos', { title: f.title.value, url, subject_name: f.subject_name.value, duration: f.duration.value }), 'เพิ่มคลิปแล้ว'); state.view === 'videos' ? reload() : go('videos');
+    } });
+  f.querySelectorAll('#seg-src button').forEach(b => b.onclick = () => { f.querySelectorAll('#seg-src button').forEach(x => x.classList.toggle('on', x === b)); $('#src-url').style.display = b.dataset.v === 'url' ? '' : 'none'; $('#src-file').style.display = b.dataset.v === 'file' ? '' : 'none'; });
+}
+async function playVideo(id) {
+  const v = await safe(() => api('POST', `/api/videos/${id}/view`)); const vi = videoInfo(v.url);
+  const player = vi.embed ? `<div style="aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;margin-top:14px"><iframe src="${esc(vi.embed)}" style="width:100%;height:100%;border:0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe></div>`
+    : vi.file ? `<video src="${esc(vi.file)}" controls autoplay style="width:100%;border-radius:12px;margin-top:14px;background:#000"></video>`
+    : `<p style="padding:20px 0">ลิงก์นี้เล่นในหน้าไม่ได้ <a href="${esc(vi.link)}" target="_blank" rel="noopener">เปิดในแท็บใหม่ →</a></p>`;
+  openModal(esc(v.title), player + `<div class="muted" style="margin-top:10px">${esc(v.uploader)} · ${fmtNum(v.views)} ครั้ง${v.subject_name ? ' · ' + esc(v.subject_name) : ''}</div>`, { wide: true });
+  if (state.view === 'videos') { const d = state.data.videos.find(x => x.video_id === id); if (d) d.views = v.views; }
+}
+
+function openReport(type, id) {
+  openModal('รายงานเนื้อหาไม่เหมาะสม', `<label class="f">เหตุผล</label><select class="select" name="preset"><option>สแปม / โฆษณา</option><option>เนื้อหาไม่เหมาะสม</option><option>ละเมิดลิขสิทธิ์</option><option>ข้อมูลเท็จ / หลอกลวง</option><option>อื่นๆ</option></select>
+    <label class="f">รายละเอียดเพิ่มเติม</label><textarea class="textarea" name="detail" style="min-height:70px"></textarea>`,
+    { onSubmit: async f => { await safe(() => api('POST', '/api/reports', { target_type: type, target_id: id, reason: f.preset.value + (f.detail.value ? ': ' + f.detail.value : '') }), 'ส่งรายงานถึงผู้ดูแลแล้ว ขอบคุณครับ'); } });
+}
+const DEL = { note: ['/api/notes/', 'ลบเอกสารนี้?'], item: ['/api/items/', 'ลบประกาศนี้?'], thread: ['/api/threads/', 'ลบกระทู้นี้และความคิดเห็นทั้งหมด?'], reply: ['/api/replies/', 'ลบความคิดเห็นนี้?'], review: ['/api/reviews/', 'ลบรีวิวนี้?'], video: ['/api/videos/', 'ลบคลิปนี้?'] };
+function del(type, id) {
+  const [path, title] = DEL[type];
+  confirmBox(title, 'การลบไม่สามารถย้อนกลับได้', async () => {
+    await safe(() => api('DELETE', path + id), 'ลบเรียบร้อยแล้ว');
+    if (type === 'thread') go('threads'); else reload();
+  });
+}
+async function saveProfile(e) { e.preventDefault(); const f = e.target; state.user = await safe(() => api('PATCH', '/api/auth/me', { display_name: f.display_name.value, year: +f.year.value }), 'บันทึกโปรไฟล์แล้ว'); render(); }
+function resetDemo() { confirmBox('รีเซ็ตข้อมูลสาธิต?', 'ข้อมูลที่สร้างในเบราว์เซอร์นี้จะหายทั้งหมด', () => { Mock.reset(); logout(); toast('รีเซ็ตแล้ว'); }); }
+function openSettings() {
+  openModal('ตั้งค่าการเชื่อมต่อ API', `<p class="muted" style="margin-top:12px">ใส่ URL ของ FastAPI backend (เช่น https://unishare-api.onrender.com หรือ http://localhost:8000) เว้นว่างเพื่อใช้โหมดสาธิต</p>
+    <label class="f">API Base URL</label><input class="input" name="api" value="${esc(CONFIG.API_BASE)}" placeholder="http://localhost:8000">
+    <p class="muted" style="margin-top:10px">สถานะตอนนี้: <b>${state.mode === 'live' ? 'เชื่อมต่อแล้ว' : 'โหมดสาธิต'}</b></p>`,
+    { onSubmit: async f => { const v = f.api.value.trim().replace(/\/$/, ''); store.setItem('us_api', v); CONFIG.API_BASE = v; store.removeItem('us_token'); state.token = ''; state.user = null; await boot(); toast(state.mode === 'live' ? 'เชื่อมต่อ API สำเร็จ' : 'เชื่อมต่อไม่ได้ ใช้โหมดสาธิต', state.mode !== 'live' && !!v); } });
+}
+
+/* ---------- theme ---------- */
+function isDark() { return false; }
+function toggleTheme() { const t = isDark() ? 'light' : 'dark'; document.documentElement.dataset.theme = t; store.setItem('us_theme', t); render(); }
+
+/* ---------- boot ---------- */
+async function boot() {
+  document.documentElement.dataset.theme = 'light';
+  $('#root').innerHTML = '<div class="empty" style="padding-top:30vh">กำลังเชื่อมต่อ...</div>';
+  state.mode = await detectMode();
+  if (state.mode === 'live') {
+    SB.onAuth(ev => { if (ev === 'PASSWORD_RECOVERY') setTimeout(openNewPassword, 300); });
+    if (/type=(recovery|signup)|access_token=/.test(location.hash)) await new Promise(r => setTimeout(r, 600));
+    try { const u = await SB.loadMe(); if (u && !u.is_banned) { state.token = 'sb'; state.user = u; } else state.token = ''; } catch { state.token = ''; }
+    if (/access_token=|type=/.test(location.hash)) history.replaceState(null, '', location.pathname + '#home');
+    if (state.user) { await route(); toast('ยินดีต้อนรับ ' + state.user.display_name); } else render();
+    return;
+  }
+  if (state.mode === 'demo' && state.token && !state.token.startsWith('demo.')) state.token = '';
+  if (state.mode === 'live' && state.token.startsWith('demo.')) state.token = '';
+  if (state.token) { try { state.user = await api('GET', '/api/auth/me'); } catch { state.token = ''; store.removeItem('us_token'); } }
+  if (state.user) await route(); else render();
+}
+window.addEventListener('hashchange', () => { if (state.user) route(); });
+setInterval(async () => { if (state.user && document.visibilityState === 'visible') { try { const n = await api('GET', '/api/notifications'); const changed = n.filter(x => !x.is_read).length !== state.notifs.filter(x => !x.is_read).length; state.notifs = n; if (changed && !$('#modal') && document.activeElement?.tagName !== 'TEXTAREA' && document.activeElement?.tagName !== 'INPUT') render(); } catch { } } }, 20000);
+boot();
+</script>
+</body>
+</html>
