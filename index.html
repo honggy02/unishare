@@ -179,6 +179,18 @@ label.f{display:block;font-size:13px;font-weight:500;color:var(--ink-2);margin:1
 .trust svg.i{color:var(--green);width:22px;height:22px}
 @media (max-width:1000px){.cats{grid-template-columns:repeat(3,1fr)}.trust{grid-template-columns:1fr 1fr}}
 @media (max-width:820px){.mkt-hero{grid-template-columns:1fr;padding:22px}.mkt-search{padding-left:14px}.mkt-search .btn{padding:8px 14px}.mkt-hero h1{font-size:29px}.collage{display:none}.promos{grid-template-columns:1fr}.promo .big{font-size:40px}}
+/* wanted board */
+.wcard{padding:16px;display:flex;flex-direction:column;gap:8px;border-left:0}
+.wcard .wtop{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.wcard h4{font-size:16px;font-weight:600}
+.wcard .budget{font-family:var(--display);font-weight:700;color:var(--green-deep)}
+.wcard.found{opacity:.6}
+.wcard .foot{display:flex;gap:6px;align-items:center;margin-top:auto;padding-top:10px;border-top:1px dashed var(--line);flex-wrap:wrap}
+.yr{background:var(--tint-sky);color:#0077C2;font-weight:600}
+.yr.senior{background:var(--green-soft);color:var(--green-deep)}
+.wanted-hero{display:flex;gap:16px;align-items:center;padding:20px 22px;border-radius:22px;background:linear-gradient(120deg,var(--tint-sky),var(--tint-grape));margin-bottom:18px;flex-wrap:wrap}
+.wanted-hero h3{font-size:19px}
+.wanted-hero p{color:var(--ink-2);font-size:14px}
 /* note card */
 .note{padding:16px;display:flex;flex-direction:column;gap:10px}
 .file-ico{width:44px;height:44px;border-radius:11px;display:grid;place-items:center;font-weight:700;font-size:11px;color:#fff;flex:none;letter-spacing:.03em}
@@ -413,7 +425,25 @@ function stars(r) { return `<span class="stars">${[1, 2, 3, 4, 5].map(i => ic('s
 function fileExt(name) { return (String(name).split('.').pop() || '').toUpperCase().slice(0, 4); }
 const EXT_COLOR = { PDF: '#C8483B', DOCX: '#3A6EA5', DOC: '#3A6EA5', PPTX: '#D9772B', PPT: '#D9772B', ZIP: '#7C3AED', PNG: '#10B981', JPG: '#10B981', JPEG: '#10B981' };
 function fileIcon(name) { const e = fileExt(name); return `<span class="file-ico" style="background:${EXT_COLOR[e] || '#0EA5E9'}">${esc(e || 'FILE')}</span>`; }
-function readFile(file) {
+/* ย่อรูปจากมือถือให้เล็กลงก่อนอัปโหลด (ด้านยาวสุด 1600px, JPEG) */
+function compressImage(file, maxSide = 1600, quality = 0.82) {
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, maxSide / Math.max(img.width, img.height));
+      const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('อ่านรูปไม่สำเร็จ')); };
+    img.src = url;
+  });
+}
+const dataUrlSize = u => Math.round((u.length - u.indexOf(',') - 1) * 3 / 4);
+async function readFile(file) {
+  if (/^image\/(jpeg|png|webp|heic|heif|bmp)$/i.test(file.type) && file.size > 300 * 1024 && file.size <= 40 * 1024 * 1024) {
+    try { const u = await compressImage(file); if (dataUrlSize(u) <= CONFIG.MAX_FILE) return u; } catch { }
+  }
   return new Promise((res, rej) => {
     if (file.size > CONFIG.MAX_FILE) return rej(new Error('ไฟล์ใหญ่เกิน 10MB'));
     const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(new Error('อ่านไฟล์ไม่สำเร็จ')); r.readAsDataURL(file);
@@ -493,12 +523,16 @@ const Mock = (() => {
         { video_id: 2, title: 'สรุป OSI Model 7 Layers', url: 'https://www.youtube.com/watch?v=vv4y_uOneC0', subject_name: subjects[2].name, duration: '12:30', views: 64, uploader: 'สมชาย ใจดี', uploader_id: 3, is_hidden: false, created_at: past(15) },
       ],
       notifs: [{ notif_id: 1, user_id: null, kind: 'announce', message: '📢 ยินดีต้อนรับสู่ UniShare เวอร์ชันใหม่!', link: 'home', is_read: false, created_at: past(3) }],
+      wanted: [
+        { wanted_id: 1, title: 'หนังสือ Data Structures (ภาษาไทย)', category: 'หนังสือเรียน', description: 'ใช้เรียน ITE-201 เทอมหน้า', budget: 200, status: 'OPEN', author: 'นักศึกษาทดลอง', author_id: 2, author_year: 2, offer_count: 1, is_hidden: false, created_at: past(5) },
+        { wanted_id: 2, title: 'ขอยืมเครื่องคิดเลขวิทยาศาสตร์ช่วงสอบ', category: 'อุปกรณ์การเรียน', description: 'ใช้แค่สัปดาห์สอบ คืนแน่นอน', budget: null, status: 'OPEN', author: 'ณิชา พรมมา', author_id: 4, author_year: 1, offer_count: 0, is_hidden: false, created_at: past(2) },
+      ],
       reports: [{ report_id: 1, target_type: 'thread', target_id: 1, reason: 'ทดสอบระบบรายงาน', reporter: 'ณิชา พรมมา', reporter_id: 4, status: 'OPEN', created_at: past(2) }],
       anns: [{ ann_id: 1, title: 'เปิดใช้งาน UniShare v2', body: 'มีระบบแนบไฟล์ในคอมเมนต์ แยกรายวิชา และโหมดแจกฟรี/ขายแล้ว', level: 'success', is_active: true, created_by: 'ผู้ดูแลระบบ', created_at: past(3) }],
       audit: [], seen: {},
     };
   }
-  function load() { try { db = JSON.parse(store.getItem(KEY)) } catch { db = null } if (!db) { db = seed(); save(); } }
+  function load() { try { db = JSON.parse(store.getItem(KEY)) } catch { db = null } if (!db) { db = seed(); save(); } if (!db.wanted) db.wanted = []; }
   function save() { try { store.setItem(KEY, JSON.stringify(db)) } catch (e) { throw err(413, 'พื้นที่เก็บข้อมูลในเบราว์เซอร์เต็ม ลองไฟล์ที่เล็กลง') } }
   const err = (status, detail) => Object.assign(new Error(detail), { status });
   const id = () => ++db.seq;
@@ -511,7 +545,7 @@ const Mock = (() => {
   const login = u => { u.last_login = now(); return { token: 'demo.' + u.user_id, user: pub(u) }; };
   const vis = (u, arr) => u.role === 'admin' ? arr : arr.filter(x => !x.is_hidden);
   const threadOut = t => ({ ...t, reply_count: db.replies.filter(r => r.thread_id === t.thread_id).length });
-  const COLL = { note: ['notes', 'note_id', 'title', 'uploader'], item: ['items', 'item_id', 'name', 'owner_name'], thread: ['threads', 'thread_id', 'title', 'author'], reply: ['replies', 'reply_id', 'reply_text', 'reply_by'], review: ['reviews', 'review_id', 'media_name', 'author'], video: ['videos', 'video_id', 'title', 'uploader'] };
+  const COLL = { wanted: ['wanted', 'wanted_id', 'title', 'author'], note: ['notes', 'note_id', 'title', 'uploader'], item: ['items', 'item_id', 'name', 'owner_name'], thread: ['threads', 'thread_id', 'title', 'author'], reply: ['replies', 'reply_id', 'reply_text', 'reply_by'], review: ['reviews', 'review_id', 'media_name', 'author'], video: ['videos', 'video_id', 'title', 'uploader'] };
   function find(coll, key, v) { const x = db[coll].find(r => r[key] === v); if (!x) throw err(404, 'ไม่พบข้อมูล'); return x; }
   function remove(coll, key, v) { db[coll] = db[coll].filter(r => r[key] !== v); }
   const adminOnly = u => { if (u.role !== 'admin') throw err(403, 'สำหรับผู้ดูแลระบบเท่านั้น'); };
@@ -666,6 +700,24 @@ const Mock = (() => {
       db.users.filter(x => x.role === 'admin').forEach(a => notify(`🚩 มีการรายงานเนื้อหาใหม่ (${b.target_type}) จาก ${u.display_name}`, a.user_id, 'warning', 'admin'));
       return { ok: true };
     }],
+    ['GET', /^\/api\/wanted$/, (u, _, q) => {
+      let r = vis(u, db.wanted); if (q.q) r = r.filter(w => has(w.title, q.q) || has(w.description, q.q));
+      if (q.status) r = r.filter(w => w.status === q.status); if (q.category) r = r.filter(w => w.category === q.category); return r.sort(byDate);
+    }],
+    ['POST', /^\/api\/wanted$/, (u, b) => {
+      const w = { wanted_id: id(), title: b.title, category: b.category, description: b.description || '', budget: b.budget == null ? null : +b.budget, status: 'OPEN', author: u.display_name, author_id: u.user_id, author_year: u.year, offer_count: 0, is_hidden: false, created_at: now() };
+      db.wanted.push(w); notify(`🙋 ${u.display_name} ตามหา "${w.title}"`, null, 'wanted', 'wanted'); return w;
+    }],
+    ['POST', /^\/api\/wanted\/(\d+)\/offer$/, (u, b, q, m) => {
+      const w = find('wanted', 'wanted_id', +m[1]); if (w.author_id === u.user_id) throw err(400, 'เป็นโพสต์ของคุณเอง');
+      if (w.status !== 'OPEN') throw err(409, 'โพสต์นี้ได้ของแล้ว'); if (!String(b.message || '').trim()) throw err(400, 'กรุณาเขียนข้อความและช่องทางติดต่อ');
+      w.offer_count++; notify(`🙋 ${u.display_name} (ปี ${u.year}) มี "${w.title}" ให้คุณ: ${String(b.message).trim()}`.slice(0, 500), w.author_id, 'item', 'wanted'); return { ok: true };
+    }],
+    ['PATCH', /^\/api\/wanted\/(\d+)\/status$/, (u, b, q, m) => { const w = find('wanted', 'wanted_id', +m[1]); if (!canManage(u, w.author_id)) throw err(403, 'เฉพาะเจ้าของโพสต์เท่านั้น'); w.status = b.status; return { ok: true }; }],
+    ['DELETE', /^\/api\/wanted\/(\d+)$/, (u, _, q, m) => {
+      const w = find('wanted', 'wanted_id', +m[1]); if (!canManage(u, w.author_id)) throw err(403, 'ลบได้เฉพาะเจ้าของหรือผู้ดูแล');
+      if (u.user_id !== w.author_id) audit(u, 'ลบโพสต์ตามหา', w.title); remove('wanted', 'wanted_id', w.wanted_id); notify(`🗑️ ลบโพสต์ตามหา "${w.title}" สำเร็จ`, u.user_id, 'delete'); return { ok: true };
+    }],
     ['GET', /^\/api\/admin\/stats$/, (u) => {
       adminOnly(u); const week = new Date(Date.now() - 7 * 864e5).toISOString();
       const all = ['notes', 'items', 'threads', 'replies', 'reviews', 'videos'].flatMap(k => db[k]);
@@ -791,8 +843,9 @@ const SB = (() => {
     note: ['notes', 'note_id', 'title', 'uploader', 'uploader_id', 'file_path'], item: ['items', 'item_id', 'name', 'owner_name', 'owner_id', 'image_path'],
     thread: ['threads', 'thread_id', 'title', 'author', 'author_id', null], reply: ['thread_replies', 'reply_id', 'reply_text', 'reply_by', 'reply_by_id', 'attachment_path'],
     review: ['reviews', 'review_id', 'media_name', 'author', 'author_id', null], video: ['videos', 'video_id', 'title', 'uploader', 'uploader_id', 'file_path'],
+    wanted: ['wanted', 'wanted_id', 'title', 'author', 'author_id', null],
   };
-  const LABEL = { note: 'เอกสาร', item: 'ประกาศ', thread: 'กระทู้', reply: 'ความคิดเห็น', review: 'รีวิว', video: 'คลิป' };
+  const LABEL = { wanted: 'โพสต์ตามหา', note: 'เอกสาร', item: 'ประกาศ', thread: 'กระทู้', reply: 'ความคิดเห็น', review: 'รีวิว', video: 'คลิป' };
   async function deleteOwned(type, id) {
     const [t, pk, tc, , oc, fc] = TBL[type];
     const row = await q(client().from(t).select('*').eq(pk, id).maybeSingle());
@@ -944,6 +997,21 @@ const SB = (() => {
     }],
     ['POST', /^\/api\/reports$/, async (b) => { await q(client().from('reports').insert({ target_type: b.target_type, target_id: +b.target_id, reason: String(b.reason).slice(0, 500), reporter_id: uid() })); return { ok: true }; }],
     // admin
+    // WantedBoard
+    ['GET', /^\/api\/wanted$/, async (_, qy) => {
+      let x = client().from('wanted').select('*');
+      if (qy.q) { const s = clean(qy.q); x = x.or(`title.ilike.%${s}%,description.ilike.%${s}%`); }
+      if (qy.status) x = x.eq('status', qy.status);
+      if (qy.category) x = x.eq('category', qy.category);
+      return (await q(x.order('created_at', { ascending: false }).limit(200))).map(w => ({ ...w, budget: w.budget == null ? null : +w.budget }));
+    }],
+    ['POST', /^\/api\/wanted$/, async (b) => {
+      const w = await q(client().from('wanted').insert({ title: b.title, category: b.category, description: b.description || '', budget: b.budget == null || b.budget === '' ? null : +b.budget, author_id: uid() }).select().single());
+      await notify(`🙋 ${me.display_name} ตามหา "${w.title}"${w.budget ? ' งบ ' + fmtNum(w.budget) + ' บาท' : ''}`, null, 'wanted', 'wanted'); return w;
+    }],
+    ['POST', /^\/api\/wanted\/(\d+)\/offer$/, async (b, _, m) => q(client().rpc('wanted_offer', { p_wanted: +m[1], p_message: String(b.message || '') }))],
+    ['PATCH', /^\/api\/wanted\/(\d+)\/status$/, async (b, _, m) => q(client().rpc('wanted_status', { p_wanted: +m[1], p_status: b.status }))],
+    ['DELETE', /^\/api\/wanted\/(\d+)$/, async (_, __, m) => deleteOwned('wanted', +m[1])],
     ['GET', /^\/api\/admin\/stats$/, async () => q(client().rpc('admin_stats'))],
     ['GET', /^\/api\/admin\/users$/, async (_, qy) => {
       let x = client().from('profiles').select('*');
@@ -1053,7 +1121,7 @@ const SB = (() => {
 const state = {
   mode: 'demo', token: store.getItem('us_token') || '', user: null,
   view: 'home', params: {}, loading: false, data: {}, subjects: [], anns: [], notifs: [],
-  f: { notes: { q: '', subject: '', sort: 'new' }, items: { q: '', type: '', status: '', category: '' }, threads: { q: '', tag: '' }, reviews: { q: '', sort: 'new' }, videos: { q: '', subject: '' } },
+  f: { notes: { q: '', subject: '', sort: 'new' }, items: { q: '', type: '', status: '', category: '' }, wanted: { q: '', status: 'OPEN', category: '' }, threads: { q: '', tag: '' }, reviews: { q: '', sort: 'new' }, videos: { q: '', subject: '' } },
   admin: { tab: 'overview', ctype: 'note', q: '', rstatus: 'OPEN' },
   panel: false,
 };
@@ -1091,6 +1159,7 @@ const NAV = [
   { id: 'home', label: 'หน้าแรก', sub: 'ภาพรวม', icon: 'home' },
   { id: 'notes', label: 'คลังความรู้', sub: 'NoteShare', icon: 'note' },
   { id: 'items', label: 'ส่งต่อสิ่งของ', sub: 'ShareSpace', icon: 'box' },
+  { id: 'wanted', label: 'รุ่นน้องตามหา', sub: 'WantedBoard', icon: 'search' },
   { id: 'threads', label: 'พูดคุยแลกเปลี่ยน', sub: 'ThreadSpace', icon: 'chat' },
   { id: 'reviews', label: 'รีวิวสื่อการเรียน', sub: 'EduReview', icon: 'star' },
   { id: 'videos', label: 'คลิปการเรียน', sub: 'EduUpload', icon: 'video' },
@@ -1113,7 +1182,8 @@ async function loadView() {
   if (v === 'admin' || v === 'thread') state.data[v] = null; // shape changes per tab / per thread
   state.loading = true; render();
   try {
-    const jobs = { home: async () => { const [ov, items] = await Promise.all([api('GET', '/api/overview'), api('GET', '/api/items')]); return { ...ov, items }; }, notes: () => api('GET', '/api/notes' + qs(f)), items: () => api('GET', '/api/items' + qs(f)),
+    const jobs = { home: async () => { const [ov, items, wanted] = await Promise.all([api('GET', '/api/overview'), api('GET', '/api/items'), api('GET', '/api/wanted?status=OPEN').catch(() => [])]); return { ...ov, items, wanted }; },
+      wanted: () => api('GET', '/api/wanted' + qs(state.f.wanted)), notes: () => api('GET', '/api/notes' + qs(f)), items: () => api('GET', '/api/items' + qs(f)),
       threads: () => api('GET', '/api/threads' + qs(f)), thread: () => api('GET', '/api/threads/' + state.params.id), reviews: () => api('GET', '/api/reviews' + qs(f)),
       videos: () => api('GET', '/api/videos' + qs(f)), admin: () => loadAdmin(), profile: () => Promise.resolve(null) };
     const [d] = await Promise.all([jobs[v](), refreshMeta()]);
@@ -1129,7 +1199,7 @@ async function reload() { await loadView(); render(); }
 let searchTimer;
 function setFilter(view, key, val) { state.f[view][key] = val; clearTimeout(searchTimer); searchTimer = setTimeout(reload, key === 'q' ? 300 : 0); }
 function globalSearch(val) {
-  const target = ['notes', 'items', 'threads', 'reviews', 'videos'].includes(state.view) ? state.view : 'notes';
+  const target = ['notes', 'items', 'wanted', 'threads', 'reviews', 'videos'].includes(state.view) ? state.view : 'notes';
   state.f[target].q = val; clearTimeout(searchTimer);
   searchTimer = setTimeout(() => { if (state.view !== target) go(target); else reload(); }, 350);
 }
@@ -1212,12 +1282,12 @@ function _render() {
       <main class="content">${state.loading && !state.data[state.view] ? '<div class="empty">กำลังโหลด...</div>' : viewHtml()}</main>
     </div>
   </div>
-  <nav class="bottom-nav">${[...NAV.slice(0, 5), ...(isAdmin() ? [{ id: 'admin', label: 'แอดมิน', icon: 'shield' }] : [])].map(n => `<button class="${active === n.id ? 'on' : ''}" onclick="go('${n.id}')">${ic(n.icon)}${n.label.replace('พูดคุยแลกเปลี่ยน', 'กระทู้').replace('รีวิวสื่อการเรียน', 'รีวิว').replace('ส่งต่อสิ่งของ', 'สิ่งของ').replace('คลังความรู้', 'เอกสาร')}</button>`).join('')}</nav>
+  <nav class="bottom-nav">${[...NAV.filter(n => ['home', 'items', 'wanted', 'notes', 'threads'].includes(n.id)), ...(isAdmin() ? [{ id: 'admin', label: 'แอดมิน', icon: 'shield' }] : [])].map(n => `<button class="${active === n.id ? 'on' : ''}" onclick="go('${n.id}')">${ic(n.icon)}${n.label.replace('พูดคุยแลกเปลี่ยน', 'กระทู้').replace('รีวิวสื่อการเรียน', 'รีวิว').replace('ส่งต่อสิ่งของ', 'สิ่งของ').replace('รุ่นน้องตามหา', 'ตามหา').replace('คลังความรู้', 'เอกสาร')}</button>`).join('')}</nav>
   ${state.panel ? notifPanel() : ''}`;
 }
 function viewHtml() {
   const d = state.data[state.view];
-  return ({ home: homeView, notes: notesView, items: itemsView, threads: threadsView, thread: threadView, reviews: reviewsView, videos: videosView, admin: adminView, profile: profileView }[state.view] || homeView)(d);
+  return ({ home: homeView, notes: notesView, items: itemsView, wanted: wantedView, threads: threadsView, thread: threadView, reviews: reviewsView, videos: videosView, admin: adminView, profile: profileView }[state.view] || homeView)(d);
 }
 function pageHead(title, desc, actions = '') { return `<div class="page-head"><div><h1>${title}</h1><p>${desc}</p></div><div class="actions">${actions}</div></div>`; }
 function emptyBox(icon, text) { return `<div class="card empty">${ic(icon)}<div>${text}</div></div>`; }
@@ -1268,7 +1338,7 @@ function pcard(i) {
   const free = i.sharing_type === 'FREE';
   return `<div class="pcard" onclick="openItem(${i.item_id})"><div class="im">${i.image_data ? `<img src="${esc(i.image_data)}" alt="">` : ''}
     <span class="tag pill ${free ? 'pill-free' : 'pill-sale'}">${free ? 'แจกฟรี' : 'ขาย'}</span></div>
-    <div class="b"><span class="pr ${free ? 'free' : ''}">${free ? 'ฟรี' : '฿' + fmtNum(i.price)}</span><span class="nm">${esc(i.name)}</span><span class="who">${esc(i.owner_name)} · ${ago(i.created_at)}</span></div></div>`;
+    <div class="b"><span class="pr ${free ? 'free' : ''}">${free ? 'ฟรี' : '฿' + fmtNum(i.price)}</span><span class="nm">${esc(i.name)}</span><span class="who">${i.owner_year ? 'พี่ปี ' + i.owner_year + ' · ' : ''}${esc(i.owner_name)} · ${ago(i.created_at)}</span></div></div>`;
 }
 function openItem(id) {
   const i = [...(state.data.home?.items || []), ...(state.data.items || [])].find(x => x.item_id === id); if (!i) return go('items');
@@ -1299,7 +1369,7 @@ function homeView(d) {
       <h1>ของรุ่นพี่ที่ไม่ใช้แล้ว<br><em>ส่งต่อ</em>ถึงมือรุ่นน้อง</h1>
       <p>หนังสือเรียน อุปกรณ์ไอที ชีทสรุป แจกฟรีหรือขายราคานักศึกษา คุยกันตรงๆ ในคอมมิวนิตี้ของเรา</p>
       <label class="mkt-search">${ic('search')}<input id="hero-q" placeholder="ค้นหา เช่น หนังสือ Database, เมาส์, Arduino" onkeydown="heroSearch(event)"><button class="btn btn-primary" onclick="heroSearch({})">ค้นหา</button></label>
-      <div class="quick"><button onclick="shopBy('type','FREE')">🎁 ของฟรี</button><button onclick="shopBy('category','หนังสือเรียน')">หนังสือเรียน</button><button onclick="shopBy('category','อุปกรณ์ไอที')">อุปกรณ์ไอที</button><button onclick="openItemForm()">+ ลงของส่งต่อ</button></div>
+      <div class="quick"><button onclick="shopBy('type','FREE')">🎁 ของฟรี</button><button onclick="shopBy('category','หนังสือเรียน')">หนังสือเรียน</button><button onclick="shopBy('category','อุปกรณ์ไอที')">อุปกรณ์ไอที</button><button onclick="openItemForm()">+ ลงของส่งต่อ</button><button onclick="go('wanted')">🙋 ตามหาของ</button></div>
     </div>
     <div class="collage">${avail.slice(0, 3).map(pcard).join('')}</div>
   </section>
@@ -1310,6 +1380,8 @@ function homeView(d) {
   </div>
   ${row('🎁 แจกฟรีล่าสุด', 'ของที่รุ่นพี่อยากส่งต่อให้ฟรี', free, "shopBy('type','FREE')")}
   ${row('🏷️ ราคาถูกจากรุ่นพี่', 'เรียงจากราคาต่ำสุด', sale, "shopBy('type','FOR_SALE')")}
+  <div class="section-title"><div><h3>🙋 รุ่นน้องกำลังตามหา</h3><div class="muted">รุ่นพี่มีของพวกนี้ไหม? กด "ฉันมีของนี้" ส่งข้อความหาน้องได้เลย</div></div><span class="spacer"></span><a href="#wanted">ดูทั้งหมด →</a></div>
+  ${(d.wanted || []).length ? `<div class="grid g3">${d.wanted.slice(0, 3).map(wantedCard).join('')}</div>` : `<div class="card empty">${ic('search')}<div>ยังไม่มีใครตามหาของ <a href="javascript:openWantedForm()">โพสต์ตามหาเป็นคนแรก</a></div></div>`}
   <div class="trust">
     <div>${ic('shield')}<span><b>@pim.ac.th</b>เฉพาะนักศึกษาสถาบัน</span></div>
     <div>${ic('box')}<span><b>${fmtNum(avail.length)}</b>ของที่ส่งต่อได้ตอนนี้</span></div>
@@ -1347,6 +1419,7 @@ function notesView(list = []) {
 }
 
 /* ---------- ShareSpace ---------- */
+const yearTag = (y, who = 'พี่') => y ? `<span class="tag yr ${y >= 3 ? 'senior' : ''}">${who}ปี ${y}</span>` : '';
 const STATUS = { AVAILABLE: ['ว่าง', 't-green'], RESERVED: ['จองแล้ว', 't-amber'], SOLD: ['ส่งต่อแล้ว', 't-gray'] };
 function itemCard(i) {
   const [sl, sc] = STATUS[i.status]; const free = i.sharing_type === 'FREE'; const own = canManage(i.owner_id);
@@ -1361,7 +1434,7 @@ function itemCard(i) {
       <span class="tag badge ${free ? 't-teal' : 't-amber'}">${free ? 'แจกฟรี' : 'ขาย'}</span><span class="tag st ${sc}">${sl}</span></div>
     <div class="body"><div class="price ${free ? 'free' : ''}">${free ? 'ฟรี' : '฿' + fmtNum(i.price)}</div>
       <b style="font-size:15px">${esc(i.name)}</b>
-      <div class="row" style="flex-wrap:wrap;gap:6px"><span class="tag t-gray">${esc(i.category)}</span><span class="tag t-gray">${esc(i.item_condition)}</span>${i.is_hidden ? '<span class="tag t-red">ถูกซ่อน</span>' : ''}</div>
+      <div class="row" style="flex-wrap:wrap;gap:6px">${yearTag(i.owner_year)}<span class="tag t-gray">${esc(i.category)}</span><span class="tag t-gray">${esc(i.item_condition)}</span>${i.is_hidden ? '<span class="tag t-red">ถูกซ่อน</span>' : ''}</div>
       ${i.description ? `<div style="font-size:13.5px;color:var(--ink-2)">${esc(i.description)}</div>` : ''}
       <div class="muted">${esc(i.owner_name)} · ${ago(i.created_at)}${i.contact && (i.reserved_by_id === state.user.user_id || own) ? `<br>ติดต่อ: <b style="color:var(--ink)">${esc(i.contact)}</b>` : ''}${i.reserved_by ? `<br>จองโดย ${esc(i.reserved_by)}` : ''}</div>
       <div class="row" style="margin-top:auto;padding-top:8px;gap:6px">${actions}</div></div></div>`;
@@ -1375,6 +1448,50 @@ function itemsView(list = []) {
       <select class="select" onchange="setFilter('items','category',this.value)"><option value="">ทุกหมวดหมู่</option>${ITEM_CATS.map(c => `<option ${f.category === c ? 'selected' : ''}>${c}</option>`).join('')}</select><span class="muted">${list.length} รายการ</span></div>
     ${list.length ? `<div class="grid g3">${list.map(itemCard).join('')}</div>` : emptyBox('box', 'ยังไม่มีประกาศตามเงื่อนไข')}`;
 }
+
+/* ---------- WantedBoard (รุ่นน้องตามหา) ---------- */
+function wantedCard(w) {
+  const own = canManage(w.author_id), open = w.status === 'OPEN';
+  let actions = '';
+  if (open && !mine(w.author_id)) actions += `<button class="btn btn-primary btn-sm" style="flex:1" onclick="openOffer(${w.wanted_id})">🙋 ฉันมีของนี้</button>`;
+  if (own) actions += `<button class="btn btn-ghost btn-sm" style="flex:1" onclick="wantedStatus(${w.wanted_id},'${open ? 'FOUND' : 'OPEN'}')">${open ? ic('check') + ' ได้ของแล้ว' : 'เปิดตามหาอีกครั้ง'}</button><button class="btn btn-danger btn-sm" onclick="del('wanted',${w.wanted_id})">${ic('trash')}</button>`;
+  else actions += `<button class="btn btn-ghost btn-sm" title="รายงาน" onclick="openReport('wanted',${w.wanted_id})">${ic('flag')}</button>`;
+  return `<div class="card wcard ${open ? '' : 'found'}">
+    <div class="wtop"><span class="tag ${open ? 't-blue' : 't-gray'}">${open ? 'กำลังตามหา' : 'ได้ของแล้ว'}</span><span class="tag t-gray">${esc(w.category)}</span>${w.is_hidden ? '<span class="tag t-red">ถูกซ่อน</span>' : ''}</div>
+    <h4>${esc(w.title)}</h4>
+    ${w.description ? `<div style="font-size:13.5px;color:var(--ink-2)">${esc(w.description)}</div>` : ''}
+    <div class="budget">${w.budget ? 'งบไม่เกิน ฿' + fmtNum(w.budget) : 'ขอรับฟรี / ยืมได้'}</div>
+    <div class="row muted" style="flex-wrap:wrap;gap:6px">${yearTag(w.author_year, 'น้อง')}<span>${esc(w.author)} · ${ago(w.created_at)}</span>${w.offer_count ? `<span class="tag t-green">${w.offer_count} คนเสนอแล้ว</span>` : ''}</div>
+    <div class="foot">${actions}</div></div>`;
+}
+function wantedView(list = []) {
+  const f = state.f.wanted;
+  const chip = (k, v, l) => `<button class="chip ${f[k] === v ? 'on' : ''}" onclick="setFilter('wanted','${k}','${v}')">${l}</button>`;
+  return pageHead('รุ่นน้องตามหา', 'น้องโพสต์ของที่อยากได้ รุ่นพี่ที่มีกด "ฉันมีของนี้" แล้วระบบจะส่งข้อความถึงน้องทันที', `<button class="btn btn-primary" onclick="openWantedForm()">${ic('plus')} โพสต์ตามหาของ</button>`) + `
+    <div class="wanted-hero"><div style="flex:1;min-width:220px"><h3>หาของไม่เจอ? บอกรุ่นพี่ได้เลย</h3><p>เช่น "หาหนังสือ Database มือสอง งบ 200" หรือ "ขอยืมเครื่องคิดเลขสอบ" รุ่นพี่ที่มีของจะทักกลับผ่านการแจ้งเตือน</p></div>
+      <button class="btn btn-primary" onclick="openWantedForm()">${ic('plus')} โพสต์ตามหา</button></div>
+    <div class="chips">${chip('status', 'OPEN', 'กำลังตามหา')}${chip('status', 'FOUND', 'ได้ของแล้ว')}${chip('status', '', 'ทั้งหมด')}</div>
+    <div class="toolbar"><label class="search" style="max-width:340px">${ic('search')}<input placeholder="ค้นหาของที่น้องตามหา" value="${esc(f.q)}" oninput="setFilter('wanted','q',this.value)"></label>
+      <select class="select" onchange="setFilter('wanted','category',this.value)"><option value="">ทุกหมวดหมู่</option>${ITEM_CATS.map(c => `<option ${f.category === c ? 'selected' : ''}>${c}</option>`).join('')}</select><span class="muted">${list.length} โพสต์</span></div>
+    ${list.length ? `<div class="grid g3">${list.map(wantedCard).join('')}</div>` : emptyBox('search', 'ยังไม่มีโพสต์ตามหาในหมวดนี้')}`;
+}
+function openWantedForm() {
+  openModal('โพสต์ตามหาของ', `
+    <label class="f">อยากได้อะไร</label><input class="input" name="title" required maxlength="255" placeholder="เช่น หนังสือ Database System Concepts">
+    <div class="grid g2" style="gap:10px"><div><label class="f">หมวดหมู่</label><select class="select" name="category">${ITEM_CATS.map(c => `<option>${c}</option>`).join('')}</select></div>
+      <div><label class="f">งบประมาณ (บาท, เว้นว่าง = ขอฟรี/ยืม)</label><input class="input" name="budget" type="number" min="0" step="1" placeholder="เช่น 200"></div></div>
+    <label class="f">รายละเอียด</label><textarea class="textarea" name="description" style="min-height:70px" placeholder="ใช้เรียนวิชาอะไร ต้องการเมื่อไหร่ รับของที่ไหนสะดวก"></textarea>`,
+    { onSubmit: async f => {
+      await safe(() => api('POST', '/api/wanted', { title: f.title.value, category: f.category.value, budget: f.budget.value ? +f.budget.value : null, description: f.description.value }), 'โพสต์ตามหาแล้ว รุ่นพี่จะเห็นในหน้าแรกด้วย');
+      state.f.wanted.status = 'OPEN'; state.view === 'wanted' ? reload() : go('wanted');
+    } });
+}
+function openOffer(id) {
+  openModal('ฉันมีของนี้', `<p class="muted" style="margin-top:12px">เขียนข้อความถึงน้อง พร้อมช่องทางติดต่อ ข้อความนี้จะส่งเป็นการแจ้งเตือนถึงน้องคนเดียว</p>
+    <label class="f">ข้อความ</label><textarea class="textarea" name="msg" required maxlength="300" placeholder="เช่น พี่มีเล่มนี้ สภาพดี ให้ฟรี ทัก LINE: myid"></textarea>`,
+    { onSubmit: async f => { await safe(() => api('POST', `/api/wanted/${id}/offer`, { message: f.msg.value }), 'ส่งข้อความถึงน้องแล้ว'); reload(); } });
+}
+async function wantedStatus(id, status) { await safe(() => api('PATCH', `/api/wanted/${id}/status`, { status }), status === 'FOUND' ? 'ดีใจด้วย! ปิดโพสต์แล้ว' : 'เปิดตามหาอีกครั้งแล้ว'); reload(); }
 
 /* ---------- ThreadSpace ---------- */
 function threadsView(list = []) {
@@ -1483,7 +1600,7 @@ async function readAll() { await safe(() => api('POST', '/api/notifications/read
    Admin console
    ========================================================= */
 const ADMIN_TABS = [['overview', 'ภาพรวม', 'chart'], ['users', 'ผู้ใช้', 'users'], ['content', 'จัดการเนื้อหา', 'list'], ['reports', 'รายงาน', 'flag'], ['announcements', 'ประกาศ', 'megaphone'], ['subjects', 'รายวิชา', 'book'], ['audit', 'บันทึกกิจกรรม', 'clock']];
-const CTYPES = [['note', 'เอกสาร'], ['item', 'สิ่งของ'], ['thread', 'กระทู้'], ['reply', 'ความคิดเห็น'], ['review', 'รีวิว'], ['video', 'คลิป']];
+const CTYPES = [['note', 'เอกสาร'], ['item', 'สิ่งของ'], ['wanted', 'ตามหา'], ['thread', 'กระทู้'], ['reply', 'ความคิดเห็น'], ['review', 'รีวิว'], ['video', 'คลิป']];
 async function loadAdmin() {
   const a = state.admin, t = a.tab;
   const stats = await api('GET', '/api/admin/stats');
@@ -1601,7 +1718,7 @@ function fileDrop(name, accept, label) {
 async function dropPicked(inp) {
   const f = inp.files[0]; if (!f) return;
   try {
-    const url = await readFile(f); inp.dataset.url = url; inp.dataset.name = f.name; inp.dataset.size = f.size;
+    const url = await readFile(f); inp.dataset.url = url; inp.dataset.name = f.name; inp.dataset.size = url.startsWith('data:') ? dataUrlSize(url) : f.size;
     $('#drop-' + inp.name + '-t').innerHTML = (url.startsWith('data:image') ? `<img src="${url}">` : fileIcon(f.name)) + `<div><b>${esc(f.name)}</b> · ${fmtSize(f.size)}</div>`;
   } catch (e) { inp.value = ''; toast(e.message, true); }
 }
@@ -1656,8 +1773,8 @@ function openThreadForm() {
 }
 async function pickAttach(inp) {
   const f = inp.files[0]; if (!f) return;
-  try { pendingAttach = { url: await readFile(f), name: f.name, size: f.size };
-    $('#reply-pending').innerHTML = `<div class="pending">${ic('clip')}<b>${esc(f.name)}</b><span class="muted">${fmtSize(f.size)}</span><span class="spacer"></span><button type="button" class="btn btn-ghost btn-sm" onclick="pendingAttach=null;$('#reply-pending').innerHTML=''">${ic('x')}</button></div>`;
+  try { const u = await readFile(f); pendingAttach = { url: u, name: f.name, size: dataUrlSize(u) };
+    $('#reply-pending').innerHTML = `<div class="pending">${ic('clip')}<b>${esc(f.name)}</b><span class="muted">${fmtSize(pendingAttach.size)}</span><span class="spacer"></span><button type="button" class="btn btn-ghost btn-sm" onclick="pendingAttach=null;$('#reply-pending').innerHTML=''">${ic('x')}</button></div>`;
   } catch (e) { toast(e.message, true); } inp.value = '';
 }
 async function sendReply(id) {
@@ -1708,7 +1825,7 @@ function openReport(type, id) {
     <label class="f">รายละเอียดเพิ่มเติม</label><textarea class="textarea" name="detail" style="min-height:70px"></textarea>`,
     { onSubmit: async f => { await safe(() => api('POST', '/api/reports', { target_type: type, target_id: id, reason: f.preset.value + (f.detail.value ? ': ' + f.detail.value : '') }), 'ส่งรายงานถึงผู้ดูแลแล้ว ขอบคุณครับ'); } });
 }
-const DEL = { note: ['/api/notes/', 'ลบเอกสารนี้?'], item: ['/api/items/', 'ลบประกาศนี้?'], thread: ['/api/threads/', 'ลบกระทู้นี้และความคิดเห็นทั้งหมด?'], reply: ['/api/replies/', 'ลบความคิดเห็นนี้?'], review: ['/api/reviews/', 'ลบรีวิวนี้?'], video: ['/api/videos/', 'ลบคลิปนี้?'] };
+const DEL = { wanted: ['/api/wanted/', 'ลบโพสต์ตามหานี้?'], note: ['/api/notes/', 'ลบเอกสารนี้?'], item: ['/api/items/', 'ลบประกาศนี้?'], thread: ['/api/threads/', 'ลบกระทู้นี้และความคิดเห็นทั้งหมด?'], reply: ['/api/replies/', 'ลบความคิดเห็นนี้?'], review: ['/api/reviews/', 'ลบรีวิวนี้?'], video: ['/api/videos/', 'ลบคลิปนี้?'] };
 function del(type, id) {
   const [path, title] = DEL[type];
   confirmBox(title, 'การลบไม่สามารถย้อนกลับได้', async () => {
